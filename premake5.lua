@@ -30,6 +30,8 @@ project "Blurry"
     language "C++"
     cppdialect "C++20"
     staticruntime "On"
-    systemversion "latest"
 
     files { "src/**.h", "src/**.cpp" }
+
+    filter "system:macosx"
+        systemversion "14.3.1"  -- Specify macOS 14 (Sanoma 14.3.1)
