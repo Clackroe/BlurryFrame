@@ -1,0 +1,1 @@
+void display_image(const char* path);

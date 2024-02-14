@@ -1,7 +1,16 @@
 #include <stdio.h>
 #include <iostream>
+#include "core.h"
+
+using namespace std;
+
 int main (){
 
-    std::cout << "Hello, World!" << std::endl;
+    cout << "Hello World!" << endl;
 
+    // display an image pwease ;)
+    const char* path = "/my/path";
+    display_image(path);
+
+    return 0;
 }
