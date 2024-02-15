@@ -1,4 +1,4 @@
-
+require "export-compile-commands"
 workspace "Blurry"
     configurations { "Debug", "Release" }
     location "build"
@@ -7,9 +7,11 @@ workspace "Blurry"
     targetdir "bin/%{cfg.buildcfg}"
     objdir "obj/%{cfg.buildcfg}"
 
+
     includedirs {
         "include",
-        "vendor/include"
+        "vendor",
+        "vendor/SFML/include"
     }
 
     files {
@@ -30,6 +32,15 @@ project "Blurry"
     language "C++"
     cppdialect "C++20"
     staticruntime "On"
+    toolset "clang"
+
+    libdirs { "vendor/SFML/build/lib" }
+
+    links {
+      "sfml-graphics",  -- Link against SFML graphics library
+      "sfml-window",    -- Link against SFML window library
+      "sfml-system"     -- Link against SFML system library
+   }
 
     files { "src/**.h", "src/**.cpp" }
 

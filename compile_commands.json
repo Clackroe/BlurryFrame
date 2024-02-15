@@ -1,0 +1,13 @@
+[
+          {
+            "directory": "/home/clack/dev/personal/BlurryFrame/build",
+            "file": "/home/clack/dev/personal/BlurryFrame/src/image_loader.cpp",
+            "command": "cc -MD -MP -DNDEBUG -I/home/clack/dev/personal/BlurryFrame/include -I/home/clack/dev/personal/BlurryFrame/vendor -I/home/clack/dev/personal/BlurryFrame/vendor/SFML/include -m64 -O2 -o /home/clack/dev/personal/BlurryFrame/obj/Release/image_loader.o -MF /home/clack/dev/personal/BlurryFrame/obj/Release/image_loader.d -c /home/clack/dev/personal/BlurryFrame/src/image_loader.cpp"
+          }
+,
+          {
+            "directory": "/home/clack/dev/personal/BlurryFrame/build",
+            "file": "/home/clack/dev/personal/BlurryFrame/src/main.cpp",
+            "command": "cc -MD -MP -DNDEBUG -I/home/clack/dev/personal/BlurryFrame/include -I/home/clack/dev/personal/BlurryFrame/vendor -I/home/clack/dev/personal/BlurryFrame/vendor/SFML/include -m64 -O2 -o /home/clack/dev/personal/BlurryFrame/obj/Release/main.o -MF /home/clack/dev/personal/BlurryFrame/obj/Release/main.d -c /home/clack/dev/personal/BlurryFrame/src/main.cpp"
+          }
+]

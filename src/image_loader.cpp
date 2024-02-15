@@ -8,7 +8,8 @@
 
 using namespace std;
 
-void display_image(const char* path) {
+
+
     int width, height, channels;
     unsigned char *img = stbi_load(path, &width, &height, &channels, 0);
     if (img == NULL) {
@@ -25,3 +26,4 @@ void display_image(const char* path) {
 
     stbi_image_free(img);
 }
+
