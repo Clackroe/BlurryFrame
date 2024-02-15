@@ -1,1 +1,2 @@
-void display_image(const char* path);
+#include <iostream>
+#include <stdio.h>
