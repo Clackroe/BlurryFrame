@@ -37,10 +37,14 @@ project "Blurry"
     libdirs { "vendor/SFML/build/lib" }
 
     links {
-      "sfml-graphics-s",  -- Link against SFML graphics library
-      "sfml-window-s",    -- Link against SFML window library
-      "sfml-system-s"     -- Link against SFML system library
+      "sfml-graphics",  -- Link against SFML graphics library
+      "sfml-window",    -- Link against SFML window library
+      "sfml-system"     -- Link against SFML system library
    }
+
+    -- filter { "system:linux" }
+    --    linkoptions { "-Wl,-rpath='$ORIGIN/../vendor/SFML/build/lib'" }
+    
 
     files { "src/**.h", "src/**.cpp" }
 
