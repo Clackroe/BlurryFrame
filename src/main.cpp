@@ -8,8 +8,10 @@ int main (){
 
     cout << "Hello World!" << endl;
 
-    // display an image pwease ;)
-    const char* path = "/my/path";
+    // sample path for testing
+    const char* path = "test_content/RentalMeme.png";
+
+    // call the function from core.h
     display_image(path);
 
     return 0;
