@@ -25,7 +25,19 @@ project "Blurry"
 
     includedirs { "include/", "libs/glad/include/", "libs/glfw/include/", "libs/glm/"}
     
-    files { "src/*.cpp" }
+    files {
+        "src/*.cpp",
+        "libs/glfw/src/cocoa_init.m",
+        "libs/glfw/src/cocoa_joystick.m",
+        "libs/glfw/src/cocoa_monitor.m",
+        "libs/glfw/src/cocoa_window.m",
+        "libs/glfw/src/cocoa_time.c",
+        "libs/glfw/src/posix_thread.c",
+        "libs/glfw/src/nsgl_context.m",
+        "libs/glfw/src/egl_context.c",
+        "libs/glfw/src/osmesa_context.c",
+        "libs/glfw/src/posix_module.c"
+    }
 
     links { "GLFW", "GLM", "GLAD"}
 
