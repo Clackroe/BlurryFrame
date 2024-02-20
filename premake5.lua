@@ -39,6 +39,8 @@ project "Blurry"
         "libs/glfw/src/posix_module.c"
     }
 
+    defines { "_GLFW_COCOA" }
+
     links { "GLFW", "GLM", "GLAD"}
 
     filter "system:linux"
