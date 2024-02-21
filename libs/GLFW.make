@@ -23,15 +23,15 @@ ifeq ($(config),debug)
   TARGETDIR = ../bin/Debug
   TARGET = $(TARGETDIR)/libGLFW.a
   OBJDIR = ../obj/Debug/Debug/GLFW
-  DEFINES += -DDEBUG -DDEBUG_SHADER
+  DEFINES += -DDEBUG -DDEBUG_SHADER -D_GLFW_COCOA
   INCLUDES += -Iglfw/include
   FORCE_INCLUDE +=
   ALL_CPPFLAGS += $(CPPFLAGS) -MD -MP $(DEFINES) $(INCLUDES)
   ALL_CFLAGS += $(CFLAGS) $(ALL_CPPFLAGS) -m64 -g
   ALL_CXXFLAGS += $(CXXFLAGS) $(ALL_CPPFLAGS) -m64 -g
   ALL_RESFLAGS += $(RESFLAGS) $(DEFINES) $(INCLUDES)
-  LIBS +=
-  LDDEPS +=
+  LIBS += ../bin/Debug/libGLM.a ../bin/Debug/libGLAD.a -lglfw.3.3
+  LDDEPS += ../bin/Debug/libGLM.a ../bin/Debug/libGLAD.a
   ALL_LDFLAGS += $(LDFLAGS) -m64
   LINKCMD = $(AR) -rcs "$@" $(OBJECTS)
   define PREBUILDCMDS
@@ -58,15 +58,15 @@ ifeq ($(config),release)
   TARGETDIR = ../bin/Release
   TARGET = $(TARGETDIR)/libGLFW.a
   OBJDIR = ../obj/Release/Release/GLFW
-  DEFINES += -DRELEASE
+  DEFINES += -DRELEASE -D_GLFW_COCOA
   INCLUDES += -Iglfw/include
   FORCE_INCLUDE +=
   ALL_CPPFLAGS += $(CPPFLAGS) -MD -MP $(DEFINES) $(INCLUDES)
   ALL_CFLAGS += $(CFLAGS) $(ALL_CPPFLAGS) -m64 -flto -O2
   ALL_CXXFLAGS += $(CXXFLAGS) $(ALL_CPPFLAGS) -m64 -flto -O2
   ALL_RESFLAGS += $(RESFLAGS) $(DEFINES) $(INCLUDES)
-  LIBS +=
-  LDDEPS +=
+  LIBS += ../bin/Release/libGLM.a ../bin/Release/libGLAD.a -lglfw.3.3
+  LDDEPS += ../bin/Release/libGLM.a ../bin/Release/libGLAD.a
   ALL_LDFLAGS += $(LDFLAGS) -m64 -flto
   LINKCMD = $(AR) -rcs "$@" $(OBJECTS)
   define PREBUILDCMDS

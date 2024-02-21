@@ -26,32 +26,31 @@ project "Blurry"
     includedirs { "include/", "libs/glad/include/", "libs/glfw/include/", "libs/glm/"}
     
     files {
-        "src/*.cpp",
-        "libs/glfw/src/cocoa_init.m",
-        "libs/glfw/src/cocoa_joystick.m",
-        "libs/glfw/src/cocoa_monitor.m",
-        "libs/glfw/src/cocoa_window.m",
-        "libs/glfw/src/cocoa_time.c",
-        "libs/glfw/src/posix_thread.c",
-        "libs/glfw/src/nsgl_context.m",
-        "libs/glfw/src/egl_context.c",
-        "libs/glfw/src/osmesa_context.c",
-        "libs/glfw/src/posix_module.c"
+        "src/*.cpp"
     }
 
-    defines { "_GLFW_COCOA" }
-
-    links { "GLFW", "GLM", "GLAD"}
-
     filter "system:linux"
-        links { "dl", "pthread" }
-
+        links { "GLFW", "dl", "pthread" }
         defines { "_X11" }
+        include "libs/glfw.lua"
+
 
     filter "system:windows"
+        links { "GLFW" }
         defines { "_WINDOWS" }
+        include "libs/glfw.lua"
 
-include "libs/glfw.lua"
+
+    filter { "system:macosx" }
+        links {"libs/glfw.3.3"}
+        defines {
+            "_GLFW_COCOA"
+        }
+        
+
+links { "GLM", "GLAD"}
+
+
 include "libs/glad.lua"
 include "libs/glm.lua"
 -- include "libs/imgui.lua"
