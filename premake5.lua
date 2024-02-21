@@ -49,3 +49,58 @@ include "libs/glad.lua"
 include "libs/glm.lua"
 -- include "libs/imgui.lua"
 
+newaction {
+    trigger = "deep-clean",
+    description = "Remove all binaries and intermediate binaries, and vs files.",
+    execute = function()
+        print("Removing binaries")
+        os.rmdir("./bin")
+        print("Removing intermediate binaries")
+        os.rmdir("./obj")
+        print("Removing project files")
+        os.rmdir("./.vs")
+        os.remove("**.sln")
+        os.remove("**.vcxproj")
+        os.remove("**.vcxproj.filters")
+        os.remove("**.vcxproj.user")
+        os.remove("./Makefile")
+        os.remove("./*.make")
+        os.remove("libs/*.make")
+        print("Done")
+    end
+}
+newaction {
+    trigger = "clean",
+    description = "Remove all binaries and intermediate binaries, and vs files.",
+    execute = function()
+        print("Removing binaries")
+        os.rmdir("./bin")
+        print("Removing intermediate binaries")
+        os.rmdir("./obj")
+        print("Removing project files")
+        os.rmdir("./.vs")
+        os.remove("**.sln")
+        os.remove("**.vcxproj")
+        os.remove("**.vcxproj.filters")
+        os.remove("**.vcxproj.user")
+        print("Done")
+    end
+}
+
+newaction {
+    trigger = "run",
+    description = "Run in Debug Mode",
+    execute = function ()
+        print("Running DEBUG...")
+        os.execute("./bin/Debug/Blurry")
+    end
+}
+
+newaction {
+    trigger = "build",
+    description = "Build in debug mode",
+    execute = function ()
+        print("Building in DEBUG")
+        os.execute("make")
+    end
+}

@@ -38,6 +38,11 @@ bin/
 build/
 obj/
 
+glm.make
+glfw.make
+imgui.make
+glad.make
+
 /.vscode
 
 Blurry.make
