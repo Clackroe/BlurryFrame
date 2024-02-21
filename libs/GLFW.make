@@ -30,8 +30,8 @@ ifeq ($(config),debug)
   ALL_CFLAGS += $(CFLAGS) $(ALL_CPPFLAGS) -m64 -g
   ALL_CXXFLAGS += $(CXXFLAGS) $(ALL_CPPFLAGS) -m64 -g
   ALL_RESFLAGS += $(RESFLAGS) $(DEFINES) $(INCLUDES)
-  LIBS += ../bin/Debug/libGLM.a ../bin/Debug/libGLAD.a -lglfw.3.3
-  LDDEPS += ../bin/Debug/libGLM.a ../bin/Debug/libGLAD.a
+  LIBS += ../bin/Debug/libGLAD.a ../bin/Debug/libGLM.a -lglfw.3.3
+  LDDEPS += ../bin/Debug/libGLAD.a ../bin/Debug/libGLM.a
   ALL_LDFLAGS += $(LDFLAGS) -m64
   LINKCMD = $(AR) -rcs "$@" $(OBJECTS)
   define PREBUILDCMDS
@@ -65,8 +65,8 @@ ifeq ($(config),release)
   ALL_CFLAGS += $(CFLAGS) $(ALL_CPPFLAGS) -m64 -flto -O2
   ALL_CXXFLAGS += $(CXXFLAGS) $(ALL_CPPFLAGS) -m64 -flto -O2
   ALL_RESFLAGS += $(RESFLAGS) $(DEFINES) $(INCLUDES)
-  LIBS += ../bin/Release/libGLM.a ../bin/Release/libGLAD.a -lglfw.3.3
-  LDDEPS += ../bin/Release/libGLM.a ../bin/Release/libGLAD.a
+  LIBS += ../bin/Release/libGLAD.a ../bin/Release/libGLM.a -lglfw.3.3
+  LDDEPS += ../bin/Release/libGLAD.a ../bin/Release/libGLM.a
   ALL_LDFLAGS += $(LDFLAGS) -m64 -flto
   LINKCMD = $(AR) -rcs "$@" $(OBJECTS)
   define PREBUILDCMDS

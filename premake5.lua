@@ -30,26 +30,22 @@ project "Blurry"
     }
 
     filter "system:linux"
-        links { "GLFW", "dl", "pthread" }
+        links { "GLFW", "GLAD", "GLM", "dl", "pthread" }
         defines { "_X11" }
         include "libs/glfw.lua"
-
-
+    
+    
     filter "system:windows"
-        links { "GLFW" }
+        links { "GLFW", "GLAD", "GLM" }
         defines { "_WINDOWS" }
         include "libs/glfw.lua"
-
-
+    
+    
     filter { "system:macosx" }
-        links {"libs/glfw.3.3"}
-        defines {
-            "_GLFW_COCOA"
-        }
-        
-
-links { "GLM", "GLAD"}
-
+        links {"glfw.3.3", "GLAD", "GLM"}
+        defines { "_GLFW_COCOA" }
+    
+    filter {}
 
 include "libs/glad.lua"
 include "libs/glm.lua"
