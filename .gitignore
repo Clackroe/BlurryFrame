@@ -42,3 +42,4 @@ obj/
 
 Blurry.make
 Makefile
+.cache

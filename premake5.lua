@@ -34,15 +34,13 @@ project "Blurry"
         defines { "_X11" }
         include "libs/glfw.lua"
     
-    
     filter "system:windows"
         links { "GLFW", "GLAD", "GLM" }
         defines { "_WINDOWS" }
         include "libs/glfw.lua"
     
-    
-    filter { "system:macosx" }
-        links {"glfw.3.3", "GLAD", "GLM"}
+    filter "system:macosx"
+        links {"libs/glfw.3.3", "GLAD", "GLM"}
         defines { "_GLFW_COCOA" }
     
     filter {}
