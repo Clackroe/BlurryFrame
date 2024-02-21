@@ -14,6 +14,7 @@
 # Compiled Dynamic libraries
 *.so
 *.dylib
+!libglfw.3.3.dylib
 *.dll
 
 # Fortran module files
@@ -36,5 +37,8 @@
 bin/
 build/
 obj/
-.DS_Store
-.vscode/
+
+/.vscode
+
+Blurry.make
+Makefile

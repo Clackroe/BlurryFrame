@@ -1,52 +1,53 @@
 require "export-compile-commands"
-workspace "Blurry"
+workspace "BlurryFrame"
     configurations { "Debug", "Release" }
-    location "build"
-    language "C++"
-    architecture "x86_64"
-    targetdir "bin/%{cfg.buildcfg}"
-    objdir "obj/%{cfg.buildcfg}"
+    startproject "Blurry"
 
-
-    includedirs {
-        "include",
-        "vendor",
-        "vendor/SFML/include"
-    }
-
-    files {
-        "src/**.h",
-        "src/**.cpp"
-    }
+    flags { "MultiProcessorCompile" }
 
     filter "configurations:Debug"
-        defines { "DEBUG" }
+        defines { "DEBUG", "DEBUG_SHADER" }
         symbols "On"
 
     filter "configurations:Release"
-        defines { "NDEBUG" }
-        optimize "On"
+        defines { "RELEASE" }
+        optimize "Speed"
+        flags { "LinkTimeOptimization" }
 
 project "Blurry"
     kind "ConsoleApp"
     language "C++"
-    cppdialect "C++20"
-    staticruntime "On"
-    toolset "clang"
+    cppdialect "C++17"
+	architecture "x86_64"
 
-    libdirs { "vendor/SFML/build/lib" }
+    targetdir "bin/%{cfg.buildcfg}"
+    objdir "obj/%{cfg.buildcfg}"
 
-    links {
-      "sfml-graphics",  -- Link against SFML graphics library
-      "sfml-window",    -- Link against SFML window library
-      "sfml-system"     -- Link against SFML system library
-   }
-
-    -- filter { "system:linux" }
-    --    linkoptions { "-Wl,-rpath='$ORIGIN/../vendor/SFML/build/lib'" }
+    includedirs { "include/", "libs/glad/include/", "libs/glfw/include/", "libs/glm/"}
     
+    files {
+        "src/*.cpp"
+    }
 
-    files { "src/**.h", "src/**.cpp" }
+    filter "system:linux"
+        links { "GLFW", "GLAD", "GLM", "dl", "pthread" }
+        defines { "_X11" }
+        include "libs/glfw.lua"
+    
+    
+    filter "system:windows"
+        links { "GLFW", "GLAD", "GLM" }
+        defines { "_WINDOWS" }
+        include "libs/glfw.lua"
+    
+    
+    filter { "system:macosx" }
+        links {"glfw.3.3", "GLAD", "GLM"}
+        defines { "_GLFW_COCOA" }
+    
+    filter {}
 
-    filter "system:macosx"
-        systemversion "14.3.1"  -- Specify macOS 14 (Sanoma 14.3.1)
+include "libs/glad.lua"
+include "libs/glm.lua"
+-- include "libs/imgui.lua"
+
