@@ -35,15 +35,11 @@ int main()
 {
     // glfw: initialize and configure
     // ------------------------------
-    // glfwInit();
     glfwSetErrorCallback(errorCallback);
     if (!glfwInit()) {
-    // Initialization failed
-    // Handle the error or exit the program
+        // Initialization failed
         cout << "Failed to initialize GLFW" << endl;
-        // return -1;
-    } else {
-        cout << "GLFW initialized" << endl;
+        return -1;
     }
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
