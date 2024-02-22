@@ -43,6 +43,11 @@ glfw.make
 imgui.make
 glad.make
 
+GLM.make
+GLFW.make
+IMGUI.make
+GLAD.make
+
 /.vscode
 
 Blurry.make

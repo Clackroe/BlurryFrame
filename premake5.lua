@@ -26,7 +26,7 @@ project "Blurry"
     includedirs { "include/", "libs/glad/include/", "libs/glfw/include/", "libs/glm/"}
     
     files {
-        "src/*.cpp"
+        "src/**.cpp",
     }
 
     filter "system:linux"
