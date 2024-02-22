@@ -23,10 +23,11 @@ project "Blurry"
     targetdir "bin/%{cfg.buildcfg}"
     objdir "obj/%{cfg.buildcfg}"
 
-    includedirs { "include/", "libs/glad/include/", "libs/glfw/include/", "libs/glm/"}
+    includedirs {"src/include/", "libs/glad/include/", "libs/glfw/include/", "libs/glm/"}
     
     files {
         "src/**.cpp",
+        "src/include/**.h"
     }
 
     filter "system:linux"

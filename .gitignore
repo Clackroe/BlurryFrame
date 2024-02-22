@@ -1,8 +1,7 @@
 # Prerequisites
 *.d
 
-# Compiled Object files
-*.slo
+# Compiled Object files *.slo
 *.lo
 *.o
 *.obj
@@ -53,3 +52,5 @@ GLAD.make
 Blurry.make
 Makefile
 .cache
+
+compile_commands.json
