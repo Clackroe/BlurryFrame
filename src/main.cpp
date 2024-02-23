@@ -157,6 +157,7 @@ int main()
 
     Vertex vertices[4];
     
+    //Fill the vertex array with the appropriate data. Will Be abstracted. 
     for (int i = 0; i < 4; ++i) {
         int texIndex = i * 2;
         int posIndex = i * 3;
@@ -193,7 +194,7 @@ int main()
     glBindVertexArray(0); 
 
 
-    //Texture stuff
+    //Texture stuff TODO: ABSTRACT HEAVILY
     // glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);
     // glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT);
 
@@ -207,7 +208,9 @@ int main()
     //Load the Texture
     const char* path = "test.png";
     int w, h, chan;
-    unsigned char* imageData = Loader::loadImage(path, &w, &h, &chan);
+    unsigned char* imageData = Loader::loadImage(path, &w, &h, &chan); 
+    //This currently provides no advantage to using STB directly. 
+    //Abstract to return an Image struct? TBD
 
 
     unsigned int texture;
