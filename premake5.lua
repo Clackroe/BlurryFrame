@@ -23,17 +23,22 @@ project "Blurry"
     targetdir "bin/%{cfg.buildcfg}"
     objdir "obj/%{cfg.buildcfg}"
 
-    includedirs {"src/include/", "libs/glad/include/", "libs/glfw/include/", "libs/glm/"}
+    includedirs {"include/", "libs/glad/include/", "libs/glfw/include/", "libs/glm/"}
     
     files {
         "src/**.cpp",
-        "src/include/**.h"
+        "src/image/**.cpp",
+        "src/graphics/**.cpp",
+        "include/**.hpp",
+        "include/**.h"
     }
 
     filter "system:linux"
         links { "GLFW", "GLAD", "GLM", "dl", "pthread" }
         defines { "_X11" }
         include "libs/glfw.lua"
+        include "libs/glad.lua"
+        include "libs/glm.lua"
     
     filter "system:windows"
         links { "GLFW", "GLAD", "GLM" }

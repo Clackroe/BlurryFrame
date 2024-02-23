@@ -1,157 +1,24 @@
 [
-          {
-            "directory": "/home/clack/dev/personal/BlurryFrame",
-            "file": "/home/clack/dev/personal/BlurryFrame/src/main.cpp",
-            "command": "cc -MD -MP -DDEBUG -DDEBUG_SHADER -D_X11 -I/home/clack/dev/personal/BlurryFrame/include -I/home/clack/dev/personal/BlurryFrame/libs/glad/include -I/home/clack/dev/personal/BlurryFrame/libs/glfw/include -I/home/clack/dev/personal/BlurryFrame/libs/glm -m64 -g -o /home/clack/dev/personal/BlurryFrame/obj/Debug/Debug/Blurry/main.o -MF /home/clack/dev/personal/BlurryFrame/obj/Debug/Debug/Blurry/main.d -c /home/clack/dev/personal/BlurryFrame/src/main.cpp"
-          }
-,
-          {
-            "directory": "/home/clack/dev/personal/BlurryFrame/libs",
-            "file": "/home/clack/dev/personal/BlurryFrame/libs/glfw/src/context.c",
-            "command": "cc -MD -MP -DDEBUG -DDEBUG_SHADER -D_GLFW_X11 -I/home/clack/dev/personal/BlurryFrame/libs/glfw/include -m64 -fPIC -g -o /home/clack/dev/personal/BlurryFrame/obj/Debug/Debug/GLFW/context.o -MF /home/clack/dev/personal/BlurryFrame/obj/Debug/Debug/GLFW/context.d -c /home/clack/dev/personal/BlurryFrame/libs/glfw/src/context.c"
-          }
-,
-          {
-            "directory": "/home/clack/dev/personal/BlurryFrame/libs",
-            "file": "/home/clack/dev/personal/BlurryFrame/libs/glfw/src/egl_context.c",
-            "command": "cc -MD -MP -DDEBUG -DDEBUG_SHADER -D_GLFW_X11 -I/home/clack/dev/personal/BlurryFrame/libs/glfw/include -m64 -fPIC -g -o /home/clack/dev/personal/BlurryFrame/obj/Debug/Debug/GLFW/egl_context.o -MF /home/clack/dev/personal/BlurryFrame/obj/Debug/Debug/GLFW/egl_context.d -c /home/clack/dev/personal/BlurryFrame/libs/glfw/src/egl_context.c"
-          }
-,
-          {
-            "directory": "/home/clack/dev/personal/BlurryFrame/libs",
-            "file": "/home/clack/dev/personal/BlurryFrame/libs/glfw/src/glx_context.c",
-            "command": "cc -MD -MP -DDEBUG -DDEBUG_SHADER -D_GLFW_X11 -I/home/clack/dev/personal/BlurryFrame/libs/glfw/include -m64 -fPIC -g -o /home/clack/dev/personal/BlurryFrame/obj/Debug/Debug/GLFW/glx_context.o -MF /home/clack/dev/personal/BlurryFrame/obj/Debug/Debug/GLFW/glx_context.d -c /home/clack/dev/personal/BlurryFrame/libs/glfw/src/glx_context.c"
-          }
-,
-          {
-            "directory": "/home/clack/dev/personal/BlurryFrame/libs",
-            "file": "/home/clack/dev/personal/BlurryFrame/libs/glfw/src/init.c",
-            "command": "cc -MD -MP -DDEBUG -DDEBUG_SHADER -D_GLFW_X11 -I/home/clack/dev/personal/BlurryFrame/libs/glfw/include -m64 -fPIC -g -o /home/clack/dev/personal/BlurryFrame/obj/Debug/Debug/GLFW/init.o -MF /home/clack/dev/personal/BlurryFrame/obj/Debug/Debug/GLFW/init.d -c /home/clack/dev/personal/BlurryFrame/libs/glfw/src/init.c"
-          }
-,
-          {
-            "directory": "/home/clack/dev/personal/BlurryFrame/libs",
-            "file": "/home/clack/dev/personal/BlurryFrame/libs/glfw/src/input.c",
-            "command": "cc -MD -MP -DDEBUG -DDEBUG_SHADER -D_GLFW_X11 -I/home/clack/dev/personal/BlurryFrame/libs/glfw/include -m64 -fPIC -g -o /home/clack/dev/personal/BlurryFrame/obj/Debug/Debug/GLFW/input.o -MF /home/clack/dev/personal/BlurryFrame/obj/Debug/Debug/GLFW/input.d -c /home/clack/dev/personal/BlurryFrame/libs/glfw/src/input.c"
-          }
-,
-          {
-            "directory": "/home/clack/dev/personal/BlurryFrame/libs",
-            "file": "/home/clack/dev/personal/BlurryFrame/libs/glfw/src/linux_joystick.c",
-            "command": "cc -MD -MP -DDEBUG -DDEBUG_SHADER -D_GLFW_X11 -I/home/clack/dev/personal/BlurryFrame/libs/glfw/include -m64 -fPIC -g -o /home/clack/dev/personal/BlurryFrame/obj/Debug/Debug/GLFW/linux_joystick.o -MF /home/clack/dev/personal/BlurryFrame/obj/Debug/Debug/GLFW/linux_joystick.d -c /home/clack/dev/personal/BlurryFrame/libs/glfw/src/linux_joystick.c"
-          }
-,
-          {
-            "directory": "/home/clack/dev/personal/BlurryFrame/libs",
-            "file": "/home/clack/dev/personal/BlurryFrame/libs/glfw/src/monitor.c",
-            "command": "cc -MD -MP -DDEBUG -DDEBUG_SHADER -D_GLFW_X11 -I/home/clack/dev/personal/BlurryFrame/libs/glfw/include -m64 -fPIC -g -o /home/clack/dev/personal/BlurryFrame/obj/Debug/Debug/GLFW/monitor.o -MF /home/clack/dev/personal/BlurryFrame/obj/Debug/Debug/GLFW/monitor.d -c /home/clack/dev/personal/BlurryFrame/libs/glfw/src/monitor.c"
-          }
-,
-          {
-            "directory": "/home/clack/dev/personal/BlurryFrame/libs",
-            "file": "/home/clack/dev/personal/BlurryFrame/libs/glfw/src/null_init.c",
-            "command": "cc -MD -MP -DDEBUG -DDEBUG_SHADER -D_GLFW_X11 -I/home/clack/dev/personal/BlurryFrame/libs/glfw/include -m64 -fPIC -g -o /home/clack/dev/personal/BlurryFrame/obj/Debug/Debug/GLFW/null_init.o -MF /home/clack/dev/personal/BlurryFrame/obj/Debug/Debug/GLFW/null_init.d -c /home/clack/dev/personal/BlurryFrame/libs/glfw/src/null_init.c"
-          }
-,
-          {
-            "directory": "/home/clack/dev/personal/BlurryFrame/libs",
-            "file": "/home/clack/dev/personal/BlurryFrame/libs/glfw/src/null_joystick.c",
-            "command": "cc -MD -MP -DDEBUG -DDEBUG_SHADER -D_GLFW_X11 -I/home/clack/dev/personal/BlurryFrame/libs/glfw/include -m64 -fPIC -g -o /home/clack/dev/personal/BlurryFrame/obj/Debug/Debug/GLFW/null_joystick.o -MF /home/clack/dev/personal/BlurryFrame/obj/Debug/Debug/GLFW/null_joystick.d -c /home/clack/dev/personal/BlurryFrame/libs/glfw/src/null_joystick.c"
-          }
-,
-          {
-            "directory": "/home/clack/dev/personal/BlurryFrame/libs",
-            "file": "/home/clack/dev/personal/BlurryFrame/libs/glfw/src/null_monitor.c",
-            "command": "cc -MD -MP -DDEBUG -DDEBUG_SHADER -D_GLFW_X11 -I/home/clack/dev/personal/BlurryFrame/libs/glfw/include -m64 -fPIC -g -o /home/clack/dev/personal/BlurryFrame/obj/Debug/Debug/GLFW/null_monitor.o -MF /home/clack/dev/personal/BlurryFrame/obj/Debug/Debug/GLFW/null_monitor.d -c /home/clack/dev/personal/BlurryFrame/libs/glfw/src/null_monitor.c"
-          }
-,
-          {
-            "directory": "/home/clack/dev/personal/BlurryFrame/libs",
-            "file": "/home/clack/dev/personal/BlurryFrame/libs/glfw/src/null_window.c",
-            "command": "cc -MD -MP -DDEBUG -DDEBUG_SHADER -D_GLFW_X11 -I/home/clack/dev/personal/BlurryFrame/libs/glfw/include -m64 -fPIC -g -o /home/clack/dev/personal/BlurryFrame/obj/Debug/Debug/GLFW/null_window.o -MF /home/clack/dev/personal/BlurryFrame/obj/Debug/Debug/GLFW/null_window.d -c /home/clack/dev/personal/BlurryFrame/libs/glfw/src/null_window.c"
-          }
-,
-          {
-            "directory": "/home/clack/dev/personal/BlurryFrame/libs",
-            "file": "/home/clack/dev/personal/BlurryFrame/libs/glfw/src/osmesa_context.c",
-            "command": "cc -MD -MP -DDEBUG -DDEBUG_SHADER -D_GLFW_X11 -I/home/clack/dev/personal/BlurryFrame/libs/glfw/include -m64 -fPIC -g -o /home/clack/dev/personal/BlurryFrame/obj/Debug/Debug/GLFW/osmesa_context.o -MF /home/clack/dev/personal/BlurryFrame/obj/Debug/Debug/GLFW/osmesa_context.d -c /home/clack/dev/personal/BlurryFrame/libs/glfw/src/osmesa_context.c"
-          }
-,
-          {
-            "directory": "/home/clack/dev/personal/BlurryFrame/libs",
-            "file": "/home/clack/dev/personal/BlurryFrame/libs/glfw/src/platform.c",
-            "command": "cc -MD -MP -DDEBUG -DDEBUG_SHADER -D_GLFW_X11 -I/home/clack/dev/personal/BlurryFrame/libs/glfw/include -m64 -fPIC -g -o /home/clack/dev/personal/BlurryFrame/obj/Debug/Debug/GLFW/platform.o -MF /home/clack/dev/personal/BlurryFrame/obj/Debug/Debug/GLFW/platform.d -c /home/clack/dev/personal/BlurryFrame/libs/glfw/src/platform.c"
-          }
-,
-          {
-            "directory": "/home/clack/dev/personal/BlurryFrame/libs",
-            "file": "/home/clack/dev/personal/BlurryFrame/libs/glfw/src/posix_module.c",
-            "command": "cc -MD -MP -DDEBUG -DDEBUG_SHADER -D_GLFW_X11 -I/home/clack/dev/personal/BlurryFrame/libs/glfw/include -m64 -fPIC -g -o /home/clack/dev/personal/BlurryFrame/obj/Debug/Debug/GLFW/posix_module.o -MF /home/clack/dev/personal/BlurryFrame/obj/Debug/Debug/GLFW/posix_module.d -c /home/clack/dev/personal/BlurryFrame/libs/glfw/src/posix_module.c"
-          }
-,
-          {
-            "directory": "/home/clack/dev/personal/BlurryFrame/libs",
-            "file": "/home/clack/dev/personal/BlurryFrame/libs/glfw/src/posix_poll.c",
-            "command": "cc -MD -MP -DDEBUG -DDEBUG_SHADER -D_GLFW_X11 -I/home/clack/dev/personal/BlurryFrame/libs/glfw/include -m64 -fPIC -g -o /home/clack/dev/personal/BlurryFrame/obj/Debug/Debug/GLFW/posix_poll.o -MF /home/clack/dev/personal/BlurryFrame/obj/Debug/Debug/GLFW/posix_poll.d -c /home/clack/dev/personal/BlurryFrame/libs/glfw/src/posix_poll.c"
-          }
-,
-          {
-            "directory": "/home/clack/dev/personal/BlurryFrame/libs",
-            "file": "/home/clack/dev/personal/BlurryFrame/libs/glfw/src/posix_thread.c",
-            "command": "cc -MD -MP -DDEBUG -DDEBUG_SHADER -D_GLFW_X11 -I/home/clack/dev/personal/BlurryFrame/libs/glfw/include -m64 -fPIC -g -o /home/clack/dev/personal/BlurryFrame/obj/Debug/Debug/GLFW/posix_thread.o -MF /home/clack/dev/personal/BlurryFrame/obj/Debug/Debug/GLFW/posix_thread.d -c /home/clack/dev/personal/BlurryFrame/libs/glfw/src/posix_thread.c"
-          }
-,
-          {
-            "directory": "/home/clack/dev/personal/BlurryFrame/libs",
-            "file": "/home/clack/dev/personal/BlurryFrame/libs/glfw/src/posix_time.c",
-            "command": "cc -MD -MP -DDEBUG -DDEBUG_SHADER -D_GLFW_X11 -I/home/clack/dev/personal/BlurryFrame/libs/glfw/include -m64 -fPIC -g -o /home/clack/dev/personal/BlurryFrame/obj/Debug/Debug/GLFW/posix_time.o -MF /home/clack/dev/personal/BlurryFrame/obj/Debug/Debug/GLFW/posix_time.d -c /home/clack/dev/personal/BlurryFrame/libs/glfw/src/posix_time.c"
-          }
-,
-          {
-            "directory": "/home/clack/dev/personal/BlurryFrame/libs",
-            "file": "/home/clack/dev/personal/BlurryFrame/libs/glfw/src/vulkan.c",
-            "command": "cc -MD -MP -DDEBUG -DDEBUG_SHADER -D_GLFW_X11 -I/home/clack/dev/personal/BlurryFrame/libs/glfw/include -m64 -fPIC -g -o /home/clack/dev/personal/BlurryFrame/obj/Debug/Debug/GLFW/vulkan.o -MF /home/clack/dev/personal/BlurryFrame/obj/Debug/Debug/GLFW/vulkan.d -c /home/clack/dev/personal/BlurryFrame/libs/glfw/src/vulkan.c"
-          }
-,
-          {
-            "directory": "/home/clack/dev/personal/BlurryFrame/libs",
-            "file": "/home/clack/dev/personal/BlurryFrame/libs/glfw/src/window.c",
-            "command": "cc -MD -MP -DDEBUG -DDEBUG_SHADER -D_GLFW_X11 -I/home/clack/dev/personal/BlurryFrame/libs/glfw/include -m64 -fPIC -g -o /home/clack/dev/personal/BlurryFrame/obj/Debug/Debug/GLFW/window.o -MF /home/clack/dev/personal/BlurryFrame/obj/Debug/Debug/GLFW/window.d -c /home/clack/dev/personal/BlurryFrame/libs/glfw/src/window.c"
-          }
-,
-          {
-            "directory": "/home/clack/dev/personal/BlurryFrame/libs",
-            "file": "/home/clack/dev/personal/BlurryFrame/libs/glfw/src/x11_init.c",
-            "command": "cc -MD -MP -DDEBUG -DDEBUG_SHADER -D_GLFW_X11 -I/home/clack/dev/personal/BlurryFrame/libs/glfw/include -m64 -fPIC -g -o /home/clack/dev/personal/BlurryFrame/obj/Debug/Debug/GLFW/x11_init.o -MF /home/clack/dev/personal/BlurryFrame/obj/Debug/Debug/GLFW/x11_init.d -c /home/clack/dev/personal/BlurryFrame/libs/glfw/src/x11_init.c"
-          }
-,
-          {
-            "directory": "/home/clack/dev/personal/BlurryFrame/libs",
-            "file": "/home/clack/dev/personal/BlurryFrame/libs/glfw/src/x11_monitor.c",
-            "command": "cc -MD -MP -DDEBUG -DDEBUG_SHADER -D_GLFW_X11 -I/home/clack/dev/personal/BlurryFrame/libs/glfw/include -m64 -fPIC -g -o /home/clack/dev/personal/BlurryFrame/obj/Debug/Debug/GLFW/x11_monitor.o -MF /home/clack/dev/personal/BlurryFrame/obj/Debug/Debug/GLFW/x11_monitor.d -c /home/clack/dev/personal/BlurryFrame/libs/glfw/src/x11_monitor.c"
-          }
-,
-          {
-            "directory": "/home/clack/dev/personal/BlurryFrame/libs",
-            "file": "/home/clack/dev/personal/BlurryFrame/libs/glfw/src/x11_window.c",
-            "command": "cc -MD -MP -DDEBUG -DDEBUG_SHADER -D_GLFW_X11 -I/home/clack/dev/personal/BlurryFrame/libs/glfw/include -m64 -fPIC -g -o /home/clack/dev/personal/BlurryFrame/obj/Debug/Debug/GLFW/x11_window.o -MF /home/clack/dev/personal/BlurryFrame/obj/Debug/Debug/GLFW/x11_window.d -c /home/clack/dev/personal/BlurryFrame/libs/glfw/src/x11_window.c"
-          }
-,
-          {
-            "directory": "/home/clack/dev/personal/BlurryFrame/libs",
-            "file": "/home/clack/dev/personal/BlurryFrame/libs/glfw/src/xkb_unicode.c",
-            "command": "cc -MD -MP -DDEBUG -DDEBUG_SHADER -D_GLFW_X11 -I/home/clack/dev/personal/BlurryFrame/libs/glfw/include -m64 -fPIC -g -o /home/clack/dev/personal/BlurryFrame/obj/Debug/Debug/GLFW/xkb_unicode.o -MF /home/clack/dev/personal/BlurryFrame/obj/Debug/Debug/GLFW/xkb_unicode.d -c /home/clack/dev/personal/BlurryFrame/libs/glfw/src/xkb_unicode.c"
-          }
-,
-          {
-            "directory": "/home/clack/dev/personal/BlurryFrame/libs",
-            "file": "/home/clack/dev/personal/BlurryFrame/libs/glad/src/glad.c",
-            "command": "cc -MD -MP -DDEBUG -DDEBUG_SHADER -D_GLAD_X11 -I/home/clack/dev/personal/BlurryFrame/libs/glad/include -m64 -fPIC -g -o /home/clack/dev/personal/BlurryFrame/obj/Debug/Debug/GLAD/glad.o -MF /home/clack/dev/personal/BlurryFrame/obj/Debug/Debug/GLAD/glad.d -c /home/clack/dev/personal/BlurryFrame/libs/glad/src/glad.c"
-          }
-,
-          {
-            "directory": "/home/clack/dev/personal/BlurryFrame/libs",
-            "file": "/home/clack/dev/personal/BlurryFrame/libs/glm/glm/detail/glm.cpp",
-            "command": "cc -MD -MP -DDEBUG -DDEBUG_SHADER -D_GLM_X11 -I/home/clack/dev/personal/BlurryFrame/libs/glm -m64 -fPIC -g -o /home/clack/dev/personal/BlurryFrame/obj/Debug/Debug/GLM/glm.o -MF /home/clack/dev/personal/BlurryFrame/obj/Debug/Debug/GLM/glm.d -c /home/clack/dev/personal/BlurryFrame/libs/glm/glm/detail/glm.cpp"
-          }
+  {
+    "arguments": [
+      "/usr/bin/g++",
+      "-DDEBUG",
+      "-DDEBUG_SHADER",
+      "-D_X11",
+      "-Iinclude",
+      "-Ilibs/glad/include",
+      "-Ilibs/glfw/include",
+      "-Ilibs/glm",
+      "-m64",
+      "-g",
+      "-std=c++17",
+      "-c",
+      "-o",
+      "obj/Debug/Debug/Blurry/window.o",
+      "src/graphics/window.cpp"
+    ],
+    "directory": "/home/clack/dev/personal/BlurryFrame",
+    "file": "/home/clack/dev/personal/BlurryFrame/src/graphics/window.cpp",
+    "output": "/home/clack/dev/personal/BlurryFrame/obj/Debug/Debug/Blurry/window.o"
+  }
 ]
