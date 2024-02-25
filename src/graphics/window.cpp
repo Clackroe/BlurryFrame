@@ -27,7 +27,7 @@ Window::Window(int SCR_WIDTH, int SCR_HEIGHT, const char* title){
         std::cerr << "Failed to initialize GLFW" << std::endl;
         exit(-1);
     }
-    window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, title, NULL, NULL);
+    window = glfwCreateWindow(SCR_HEIGHT, SCR_WIDTH, title, glfwGetPrimaryMonitor(), NULL);
     if (window == NULL)
     {
         std::cerr << "Failed to create GLFW window" << std::endl;

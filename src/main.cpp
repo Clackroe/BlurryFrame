@@ -14,7 +14,8 @@ const unsigned int SCR_HEIGHT = 121;
 
 int main()
 {
-    Window glWindow = Window(SCR_WIDTH, SCR_HEIGHT, "BlurryFrame");
+    const GLFWvidmode* mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
+    Window glWindow = Window(mode->height, mode->width, "BlurryFrame");
 
     Shader* shader = new Shader("assets/shaders/basic-vert.glsl", "assets/shaders/basic-frag.glsl");
 
