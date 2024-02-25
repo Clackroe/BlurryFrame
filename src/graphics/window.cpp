@@ -22,6 +22,9 @@ static void processInput(GLFWwindow *window)
 
 Window::Window(int SCR_WIDTH, int SCR_HEIGHT, const char* title){
     
+    Window::SCR_WIDTH = SCR_WIDTH;
+    Window::SCR_HEIGHT = SCR_HEIGHT;
+
     if (!glfwInit()) {
         // Initialization failed
         std::cerr << "Failed to initialize GLFW" << std::endl;

@@ -62,7 +62,7 @@ public:
         } else if (type == PERSP) {
             // printf("PERSP!!!");
             return glm::perspective(glm::radians(FOV), 
-                    1920.0f / 1080.0f,
+                    (float)Window::getWidth() / (float)Window::getHeight(),
                     // (float)Window::getWidth() / (float)Window::getHeight(), 
                     0.1f, 500.0f);
         }
