@@ -1,6 +1,7 @@
 #include <iostream>
 #include <image/image_loader.h>
 #include "glm/ext/matrix_transform.hpp"
+#include "glm/ext/vector_float3.hpp"
 #include "graphics/window.hpp"
 #include "graphics/shader.hpp"
 #include <graphics/camera.hpp>
@@ -19,14 +20,71 @@ int main()
     Window glWindow = Window(SCR_WIDTH, SCR_HEIGHT, "BlurryFrame");
 
     Shader* shader = new Shader("assets/shaders/basic-vert.glsl", "assets/shaders/basic-frag.glsl");
-    Camera* camera = new Camera(glm::vec3(0.0, 0.0, 3.0), ORTHO);
+    Camera* camera = new Camera(glm::vec3(0.0, 0.0, 2.0), ORTHO);
+
+    //Texture stuff TODO: ABSTRACT HEAVILY
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);	
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+    //Load the Texture
+    const char* path = "test.png";
+    int w, h, chan;
+    unsigned char* imageData = Loader::loadImage(path, &w, &h, &chan); 
+    //This currently provides no advantage to using STB directly. 
+    //Abstract to return an Image struct? TBD
+
+
+    unsigned int texture;
+    glGenTextures(1, &texture);
+
+    glBindTexture(GL_TEXTURE_2D, texture);
+
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, w, h, 0, GL_RGB, GL_UNSIGNED_BYTE, imageData);
+    glGenerateMipmap(GL_TEXTURE_2D);
+    //TODO: Abstract most of this texture boilerplate.
+
+    Loader::freePixels(imageData);
+
+    glActiveTexture(GL_TEXTURE0); // activate the texture unit first before binding texture
+    glBindTexture(GL_TEXTURE_2D, texture);
+
+    float imageAspectRatio = static_cast<float>(w) / static_cast<float>(h);
+    float screenAspectRatio = static_cast<float>(SCR_WIDTH) / static_cast<float>(SCR_HEIGHT);
+
+    float scaleFactor = 1.0f;
+    if (imageAspectRatio > screenAspectRatio) {
+        scaleFactor = static_cast<float>(SCR_HEIGHT) / static_cast<float>(h);
+    } else {
+        scaleFactor = static_cast<float>(SCR_WIDTH) / static_cast<float>(w);
+    }
+
+    // Adjust vertex positions to maintain aspect ratio
+    float scaledWidth = static_cast<float>(w) * scaleFactor;
+    float scaledHeight = static_cast<float>(h) * scaleFactor;
+
+    float halfWidth = scaledWidth / 2.0f;
+    float halfHeight = scaledHeight / 2.0f;
 
     float vertexPos[] = {
-         1.0f,  1.0f, 0.0f,  // top right
-         1.0f, -1.0f, 0.0f,  // bottom right
-        -1.0f, -1.0f, 0.0f,  // bottom left
-        -1.0f,  1.0f, 0.0f   // top left 
+        halfWidth,  halfHeight, 0.0f,  // top right
+        halfWidth, -halfHeight, 0.0f,  // bottom right
+       -halfWidth, -halfHeight, 0.0f,  // bottom left
+       -halfWidth,  halfHeight, 0.0f   // top left 
     };
+
+    // Normalize vertex positions to be between 0 and 1
+    for (int i = 0; i < 4; ++i) {
+        vertexPos[i * 3] /= SCR_WIDTH;
+        vertexPos[i * 3 + 1] /= SCR_HEIGHT;
+    }
+    // float vertexPos[] = {
+    //      1.0f,  1.0f, 0.0f,  // top right
+    //      1.0f, -1.0f, 0.0f,  // bottom right
+    //     -1.0f, -1.0f, 0.0f,  // bottom left
+    //     -1.0f,  1.0f, 0.0f   // top left 
+    // };
     unsigned int indices[] = {  // note that we start from 0!
         0, 1, 3,  // first Triangle
         1, 2, 3   // second Triangle
@@ -97,36 +155,10 @@ int main()
     glBindVertexArray(0); 
 
 
-    //Texture stuff TODO: ABSTRACT HEAVILY
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);	
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-    //Load the Texture
-    const char* path = "test.png";
-    int w, h, chan;
-    unsigned char* imageData = Loader::loadImage(path, &w, &h, &chan); 
-    //This currently provides no advantage to using STB directly. 
-    //Abstract to return an Image struct? TBD
-
-
-    unsigned int texture;
-    glGenTextures(1, &texture);
-    
-    glBindTexture(GL_TEXTURE_2D, texture);
-
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, w, h, 0, GL_RGB, GL_UNSIGNED_BYTE, imageData);
-    glGenerateMipmap(GL_TEXTURE_2D);
-    //TODO: Abstract most of this texture boilerplate.
-    
-    Loader::freePixels(imageData);
-
-    glActiveTexture(GL_TEXTURE0); // activate the texture unit first before binding texture
-    glBindTexture(GL_TEXTURE_2D, texture);
     //
     // render loop
     // -----------
+    float angle = 0.0;
     while (!glfwWindowShouldClose(glWindow.window))
 
     {
@@ -137,7 +169,10 @@ int main()
 
         shader->use();
         shader->setInt("image", 0);
-        glm::mat4 trans = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, 0.0f));
+        glm::mat4 trans = glm::scale(mat4(1.0f), vec3(1.0, 1.0, 1.0));
+
+        trans = rotate(trans, angle, vec3(0.0, 0.0, 1.0));
+        angle += 0.01f * glfwGetTime();
         // trans = glm::rotate(trans, glm::radians(90.0f), glm::vec3(0.0, 0.0, 1.0));
         // trans = glm::scale(trans, glm::vec3(0.5, 0.5, 0.5));        
         // glm::mat4 model = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, 0.0f));
