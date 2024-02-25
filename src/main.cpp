@@ -4,14 +4,6 @@
 #include "graphics/shader.hpp"
 
 
-
-// settings
-const unsigned int SCR_WIDTH = 435;
-const unsigned int SCR_HEIGHT = 121;
-// const unsigned int SCR_WIDTH = 1920;
-// const unsigned int SCR_HEIGHT = 1080;
-
-
 int main()
 {
     const GLFWvidmode* mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
