@@ -1,15 +1,17 @@
 #include <iostream>
 #include <image/image_loader.h>
+#include "glm/ext/matrix_transform.hpp"
 #include "graphics/window.hpp"
 #include "graphics/shader.hpp"
+#include <graphics/camera.hpp>
 
 
 
 // settings
-const unsigned int SCR_WIDTH = 435;
-const unsigned int SCR_HEIGHT = 121;
-// const unsigned int SCR_WIDTH = 1920;
-// const unsigned int SCR_HEIGHT = 1080;
+// const unsigned int SCR_WIDTH = 435;
+// const unsigned int SCR_HEIGHT = 121;
+const unsigned int SCR_WIDTH = 1920;
+const unsigned int SCR_HEIGHT = 1080;
 
 
 int main()
@@ -17,6 +19,7 @@ int main()
     Window glWindow = Window(SCR_WIDTH, SCR_HEIGHT, "BlurryFrame");
 
     Shader* shader = new Shader("assets/shaders/basic-vert.glsl", "assets/shaders/basic-frag.glsl");
+    Camera* camera = new Camera(glm::vec3(0.0, 0.0, 3.0), ORTHO);
 
     float vertexPos[] = {
          1.0f,  1.0f, 0.0f,  // top right
@@ -121,7 +124,7 @@ int main()
 
     glActiveTexture(GL_TEXTURE0); // activate the texture unit first before binding texture
     glBindTexture(GL_TEXTURE_2D, texture);
-
+    //
     // render loop
     // -----------
     while (!glfwWindowShouldClose(glWindow.window))
@@ -134,6 +137,14 @@ int main()
 
         shader->use();
         shader->setInt("image", 0);
+        glm::mat4 trans = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, 0.0f));
+        // trans = glm::rotate(trans, glm::radians(90.0f), glm::vec3(0.0, 0.0, 1.0));
+        // trans = glm::scale(trans, glm::vec3(0.5, 0.5, 0.5));        
+        // glm::mat4 model = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, 0.0f));
+        shader->setMat4("model", trans);
+        shader->setMat4("proj", camera->getProjection());
+        // shader->setMat4("view", glm::translate(glm::mat4(1.0f), glm::vec3(0.0, 0.0, -3.0)));
+        shader->setMat4("view", camera->getView());
 
         glBindVertexArray(VAO); // seeing as we only have a single VAO there's no need to bind it every time, but we'll do so to keep things a bit more organized
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
