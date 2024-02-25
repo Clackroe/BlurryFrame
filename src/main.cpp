@@ -1,10 +1,9 @@
 #include <iostream>
 #include <image/image_loader.h>
 #include "graphics/window.hpp"
+#include "graphics/shader.hpp"
 
 
-
-using namespace std;
 
 // settings
 const unsigned int SCR_WIDTH = 435;
@@ -12,83 +11,13 @@ const unsigned int SCR_HEIGHT = 121;
 // const unsigned int SCR_WIDTH = 1920;
 // const unsigned int SCR_HEIGHT = 1080;
 
-const char *vertexShaderSource = "#version 330 core\n"
-    "layout (location = 0) in vec3 aPos;\n"
-    "layout (location = 1) in vec2 aTexPos;\n"
-    "out vec2 TexCoord;\n"
-    "void main()\n"
-    "{\n"
-    "   gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
-        "TexCoord = aTexPos;\n"
-    "}\0";
-const char *fragmentShaderSource = "#version 330 core\n"
-    "out vec4 FragColor;\n"
-    "in vec2 TexCoord;\n"
-    "uniform sampler2D image;\n"
-    "void main()\n"
-    "{\n"
-    "   FragColor = texture(image, TexCoord);\n"
-    "}\n\0";
-
-
-// Error callback function
 
 int main()
 {
-    // glfw: initialize and configure
-    // ------------------------------
-    
     Window glWindow = Window(SCR_WIDTH, SCR_HEIGHT, "BlurryFrame");
 
-    // glfw window creation
-    // --------------------
+    Shader* shader = new Shader("assets/shaders/basic-vert.glsl", "assets/shaders/basic-frag.glsl");
 
-    // glad: load all OpenGL function pointers
-    // ---------------------------------------
-
-
-    // build and compile our shader program
-    // ------------------------------------
-    // vertex shader
-    unsigned int vertexShader = glCreateShader(GL_VERTEX_SHADER);
-    glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
-    glCompileShader(vertexShader);
-    // check for shader compile errors
-    int success;
-    char infoLog[512];
-    glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &success);
-    if (!success)
-    {
-        glGetShaderInfoLog(vertexShader, 512, NULL, infoLog);
-        cout << "ERROR::SHADER::VERTEX::COMPILATION_FAILED\n" << infoLog << endl;
-    }
-    // fragment shader
-    unsigned int fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-    glShaderSource(fragmentShader, 1, &fragmentShaderSource, NULL);
-    glCompileShader(fragmentShader);
-    // check for shader compile errors
-    glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &success);
-    if (!success)
-    {
-        glGetShaderInfoLog(fragmentShader, 512, NULL, infoLog);
-        cout << "ERROR::SHADER::FRAGMENT::COMPILATION_FAILED\n" << infoLog << endl;
-    }
-    // link shaders
-    unsigned int shaderProgram = glCreateProgram();
-    glAttachShader(shaderProgram, vertexShader);
-    glAttachShader(shaderProgram, fragmentShader);
-    glLinkProgram(shaderProgram);
-    // check for linking errors
-    glGetProgramiv(shaderProgram, GL_LINK_STATUS, &success);
-    if (!success) {
-        glGetProgramInfoLog(shaderProgram, 512, NULL, infoLog);
-        cout << "ERROR::SHADER::PROGRAM::LINKING_FAILED\n" << infoLog << endl;
-    }
-    glDeleteShader(vertexShader);
-    glDeleteShader(fragmentShader);
-
-    // set up vertex data (and buffer(s)) and configure vertex attributes
-    // ------------------------------------------------------------------
     float vertexPos[] = {
          1.0f,  1.0f, 0.0f,  // top right
          1.0f, -1.0f, 0.0f,  // bottom right
@@ -193,12 +122,6 @@ int main()
     glActiveTexture(GL_TEXTURE0); // activate the texture unit first before binding texture
     glBindTexture(GL_TEXTURE_2D, texture);
 
-    // glUniform1i(glGetUniformLocation(fragmentShader.ID, "image"), 0);
-
-
-    // uncomment this call to draw in wireframe polygons.
-    //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-
     // render loop
     // -----------
     while (!glfwWindowShouldClose(glWindow.window))
@@ -206,28 +129,23 @@ int main()
     {
         glWindow.frameStart();
         glWindow.Update();
-        // render
-        // ------
-        glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-        glClear(GL_COLOR_BUFFER_BIT);
 
-        // draw our first triangle
         glBindTexture(GL_TEXTURE_2D, texture);
-        glUseProgram(shaderProgram);
-        glUniform1i(glGetUniformLocation(shaderProgram, "image"), 0);
+
+        shader->use();
+        shader->setInt("image", 0);
+
         glBindVertexArray(VAO); // seeing as we only have a single VAO there's no need to bind it every time, but we'll do so to keep things a bit more organized
-        //glDrawArrays(GL_TRIANGLES, 0, 6);
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-        // glBindVertexArray(0); // no need to unbind it every time 
-        //
+
         glWindow.frameEnd();
     }
 
     glDeleteVertexArrays(1, &VAO);
     glDeleteBuffers(1, &VBO);
     glDeleteBuffers(1, &EBO);
-    glDeleteProgram(shaderProgram);
 
+    delete shader;
     return 0;
 }
 
