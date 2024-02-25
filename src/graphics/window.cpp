@@ -46,11 +46,13 @@ Window::~Window(){
 }
 
 void Window::frameStart(){
+
     ::processInput(window);
+
 }
 
 void Window::Update(){
-
+    //Ensure there are no errors in OpenGL at frame time.
     GLenum err;
     while ((err = glGetError()) != GL_NO_ERROR) {
         std::cerr << err << std::endl;
@@ -91,6 +93,11 @@ void Window::initOpenGL(){
         std::cerr << "Failed to initialize GLAD" << std::endl;
         exit(-1);
     }
+
+    //Important for texture packing. By Default it expects textures to have a 
+    //padding in their data, which results in slanted textures if not correctly 
+    //done. This ensures that it knows to expect textures fully packed.
+    glPixelStorei(GL_UNPACK_ALIGNMENT, 1); 
 
 }
 

@@ -107,7 +107,6 @@ int main()
         0.0f, 1.0f // top left
     };
 
-    glPixelStorei(GL_UNPACK_ALIGNMENT, 1); //Important for texture packing INCLUDE IN INIT
 
 
     unsigned int VBO, VAO, EBO;
