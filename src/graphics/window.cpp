@@ -9,8 +9,10 @@ static void errorCallback(int error, const char* description) {
     std::cerr << "GLFW Error " << error << ": " << description << std::endl;
 }
 
-void framebuffer_size_callback(GLFWwindow* window, int width, int height)
+static void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 {
+    Window::setHeight(height);
+    Window::setWidth(width);
     glViewport(0, 0, width, height);
 }
 
@@ -80,6 +82,9 @@ void Window::initCallbacks(){
 int Window::getWidth(){ return SCR_WIDTH;}
 int Window::getHeight(){ return SCR_HEIGHT;}
 
+void Window::setWidth(int w){SCR_WIDTH = w;}
+void Window::setHeight(int h){SCR_HEIGHT= h;}
+
 
 void Window::initOpenGL(){
     
@@ -104,6 +109,8 @@ void Window::initOpenGL(){
     //padding in their data, which results in slanted textures if not correctly 
     //done. This ensures that it knows to expect textures fully packed.
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1); 
+
+    std::cout << "OpenGL VS: " << glGetString(GL_VERSION) << std::endl;
 
 }
 

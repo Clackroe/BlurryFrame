@@ -21,7 +21,7 @@ int main()
     Window glWindow = Window(SCR_WIDTH, SCR_HEIGHT, "BlurryFrame");
 
     Shader* shader = new Shader("assets/shaders/basic-vert.glsl", "assets/shaders/basic-frag.glsl");
-    Camera* camera = new Camera(glm::vec3(0.0, 0.0, 2.0), ORTHO);
+    Camera* camera = new Camera(glm::vec3(0.0, 0.0, 20.0), PERSP);
 
     //Texture stuff TODO: ABSTRACT HEAVILY
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);	
@@ -30,8 +30,10 @@ int main()
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
     Image image = Image("test.png");
+    Image image2 = Image("test1.png");
 
-    image.loadTexture(GL_TEXTURE0);
+    image.loadTexture(0);
+    image2.loadTexture(1);
 
     // render loop
     // -----------
@@ -44,14 +46,20 @@ int main()
 
         shader->use();
         shader->setInt("image", 0);
-        glm::mat4 trans = glm::scale(mat4(1.0f), vec3(3.0, 3.0, 3.0));
-
+        glm::mat4 trans = glm::scale(mat4(1.0f), vec3(2.0, 2.0, 2.0));
         trans = rotate(trans, angle, vec3(0.0, 0.0, 1.0));
+        angle += (0.001f * glfwGetTime());
         shader->setMat4("model", trans);
         shader->setMat4("proj", camera->getProjection());
         shader->setMat4("view", camera->getView());
-
         image.render();    
+
+        trans = glm::translate(trans, vec3(1.0f, 1.0f + angle, 1.0f));
+
+        shader->setMat4("model", trans);
+
+        shader->setInt("image", 1);
+        image2.render();
 
         glWindow.frameEnd();
     }

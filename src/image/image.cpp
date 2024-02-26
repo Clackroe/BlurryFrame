@@ -12,6 +12,9 @@ Image::~Image(){
 }
 
 void Image::render(){
+    //TODO: Rethink the layout of this entire class. I don't like the API as 
+    //it stands.
+    glActiveTexture(GL_TEXTURE0 + textureSlot);
     glBindTexture(GL_TEXTURE_2D, texID);
 
     glBindVertexArray(VAO); 
@@ -22,6 +25,11 @@ void Image::render(){
 
 void Image::loadTexture(int textureSlot){
 
+    //TODO: Rethink how this is laid out. We should probably keep the pixels on
+    //hand so that we can do image processing, and also the texture slot shouldnt
+    //be set here ideally.
+    textureSlot = textureSlot;
+
     glGenTextures(1, &texID);
     glBindTexture(GL_TEXTURE_2D, texID);
 
@@ -29,7 +37,7 @@ void Image::loadTexture(int textureSlot){
     glGenerateMipmap(GL_TEXTURE_2D);
     Loader::freePixels(pixels);
 
-    glActiveTexture(textureSlot);
+    glActiveTexture(GL_TEXTURE0 + textureSlot);
     glBindTexture(GL_TEXTURE_2D, texID);
 
     generateVertex();

@@ -17,6 +17,7 @@ public:
     int w, h, chan;
     unsigned char* pixels;
     unsigned int texID;
+    int textureSlot;
 
     void loadTexture(int textureSlot);
 

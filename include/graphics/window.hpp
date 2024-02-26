@@ -14,6 +14,8 @@ public:
 
     static int getWidth();
     static int getHeight();
+    static void setHeight(int h);
+    static void setWidth(int w);
 
     void frameStart();
     void Update();
