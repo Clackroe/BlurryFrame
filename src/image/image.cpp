@@ -28,7 +28,13 @@ void Image::loadTexture(int textureSlot){
     //TODO: Rethink how this is laid out. We should probably keep the pixels on
     //hand so that we can do image processing, and also the texture slot shouldnt
     //be set here ideally.
-    textureSlot = textureSlot;
+
+    //Apparently windows sucks at predicting what you need....
+
+    //Linux OG: textureSlot = textureSlot
+    //Windows though I wanted to set the parameter to itself...
+
+    Image::textureSlot = textureSlot;
 
     glGenTextures(1, &texID);
     glBindTexture(GL_TEXTURE_2D, texID);
