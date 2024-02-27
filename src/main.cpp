@@ -8,7 +8,6 @@
 #include <graphics/camera.hpp>
 
 
-
 // settings
 // const unsigned int SCR_WIDTH = 435;
 // const unsigned int SCR_HEIGHT = 121;
@@ -18,7 +17,8 @@ const unsigned int SCR_HEIGHT = 1080;
 
 int main()
 {
-    Window glWindow = Window(SCR_WIDTH, SCR_HEIGHT, "BlurryFrame");
+    // const GLFWvidmode* mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
+    Window glWindow = Window(mode->height, mode->width, "BlurryFrame");
 
     Shader* shader = new Shader("assets/shaders/basic-vert.glsl", "assets/shaders/basic-frag.glsl");
     Camera* camera = new Camera(glm::vec3(0.0, 0.0, 20.0), PERSP);
