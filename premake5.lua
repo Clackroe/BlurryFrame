@@ -33,21 +33,24 @@ project "Blurry"
         "include/**.h"
     }
 
-    -- filter "system:linux"
-    --     links { "GLFW", "GLAD", "GLM", "dl", "pthread" }
-    --     defines { "_X11" }
-    --     include "libs/glfw.lua"
-    --     include "libs/glad.lua"
-    --     include "libs/glm.lua"
+    if os.host() == "linux" then
+        links { "GLFW", "GLAD", "GLM", "dl", "pthread" }
+        defines { "_X11" }
+        include "libs/glfw.lua"
+        include "libs/glad.lua"
+        include "libs/glm.lua"
+    end
     
-    -- filter "system:windows"
-    --     links { "GLFW", "GLAD", "GLM" }
-    --     defines { "_WINDOWS" }
-    --     include "libs/glfw.lua"
+    if os.host() == "windows" then
+        links { "GLFW", "GLAD", "GLM" }
+        defines { "_WINDOWS" }
+        include "libs/glfw.lua"
+    end
     
-    filter "system:macosx"
+    if os.host() == "macosx" then
         links {"libs/glfw.3.3", "GLAD", "GLM"}
         defines { "_GLFW_COCOA" }
+    end
     
     filter {}
 
