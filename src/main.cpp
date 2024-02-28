@@ -6,6 +6,11 @@
 #include "graphics/window.hpp"
 #include "graphics/shader.hpp"
 #include <graphics/camera.hpp>
+#include <string>
+#include <iostream>
+#include <filesystem>
+#include <unistd.h>
+namespace fs = std::filesystem;
 
 
 // settings
@@ -29,11 +34,20 @@ int main()
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-    Image image = Image("content/test5.jpeg");
+    // Image image = Image("content/test6.jpeg");
     // Image image2 = Image("test1.png");
 
-    image.loadTexture(0);
+    // image.loadTexture(0);
     // image2.loadTexture(1);
+
+    // get all files in content folder
+    std::string path = "content/";
+    // array to hold path names
+    std::vector<std::string> files;
+    for (const auto & entry : fs::directory_iterator(path))
+        files.push_back(entry.path().string());
+
+    std::cout << files[0] << std::endl;
 
     // render loop
     // -----------
@@ -41,6 +55,10 @@ int main()
     while (!glfwWindowShouldClose(glWindow.window))
 
     {
+        int i = rand() % files.size();
+        Image image = Image(files[i].c_str());
+        image.loadTexture(0);
+
         glWindow.frameStart();
         glWindow.Update();
 
@@ -62,10 +80,12 @@ int main()
         image.render();
 
         glWindow.frameEnd();
+
+        // sleep 1 seconds
+        sleep(1);
     }
 
 
     delete shader;
     return 0;
 }
-
