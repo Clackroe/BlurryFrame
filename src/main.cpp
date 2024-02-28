@@ -28,12 +28,12 @@ int main()
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    
-    Image image = Image("test.JPG");
-    Image image2 = Image("test1.png");
+
+    Image image = Image("test1.png");
+    // Image image2 = Image("test1.png");
 
     image.loadTexture(0);
-    image2.loadTexture(1);
+    // image2.loadTexture(1);
 
     // render loop
     // -----------
@@ -46,20 +46,15 @@ int main()
 
         shader->use();
         shader->setInt("image", 0);
-        glm::mat4 trans = glm::scale(mat4(1.0f), vec3(2.0, 2.0, 2.0));
-        trans = rotate(trans, angle, vec3(0.0, 0.0, 1.0));
-        angle += (0.001f * glfwGetTime());
+
+        // display image in the middle of the screen
+        float scale_factor = std::max(static_cast<float>(SCR_WIDTH) / image.w, static_cast<float>(SCR_HEIGHT) / image.h);
+        glm::mat4 trans = glm::scale(mat4(1.0f), vec3(scale_factor, scale_factor, 1.0));
+        
         shader->setMat4("model", trans);
         shader->setMat4("proj", camera->getProjection());
         shader->setMat4("view", camera->getView());
-        image.render();    
-
-        trans = glm::translate(trans, vec3(1.0f, 1.0f + angle, 1.0f));
-
-        shader->setMat4("model", trans);
-
-        shader->setInt("image", 1);
-        image2.render();
+        image.render();
 
         glWindow.frameEnd();
     }
