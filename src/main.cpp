@@ -23,7 +23,7 @@ const unsigned int SCR_HEIGHT = 1080;
 int main()
 {
     // const GLFWvidmode* mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
-    Window glWindow = Window(SCR_WIDTH, SCR_HEIGHT, "BlurryFrame");
+    Window glWindow = Window(SCR_WIDTH, SCR_HEIGHT, "blur");
 
     Shader* shader = new Shader("assets/shaders/basic-vert.glsl", "assets/shaders/basic-frag.glsl");
     Camera* camera = new Camera(glm::vec3(0.0, 0.0, 20.0), ORTHO);
