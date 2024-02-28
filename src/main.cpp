@@ -21,7 +21,7 @@ int main()
     Window glWindow = Window(SCR_WIDTH, SCR_HEIGHT, "BlurryFrame");
 
     Shader* shader = new Shader("assets/shaders/basic-vert.glsl", "assets/shaders/basic-frag.glsl");
-    Camera* camera = new Camera(glm::vec3(0.0, 0.0, 20.0), PERSP);
+    Camera* camera = new Camera(glm::vec3(0.0, 0.0, 20.0), ORTHO);
 
     //Texture stuff TODO: ABSTRACT HEAVILY
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);	
@@ -29,7 +29,7 @@ int main()
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-    Image image = Image("test1.png");
+    Image image = Image("test5.jpeg");
     // Image image2 = Image("test1.png");
 
     image.loadTexture(0);
@@ -47,8 +47,13 @@ int main()
         shader->use();
         shader->setInt("image", 0);
 
-        // display image in the middle of the screen
-        float scale_factor = std::max(static_cast<float>(SCR_WIDTH) / image.w, static_cast<float>(SCR_HEIGHT) / image.h);
+        // image scale based on screen size and image size
+        float scale_factor = 1.0f;
+        if ((image.w / image.h) < (SCR_WIDTH / SCR_HEIGHT)) { // image is wider than screen
+            scale_factor = std::min(static_cast<float>(SCR_WIDTH) / image.w, static_cast<float>(SCR_HEIGHT) / image.h);
+        } else { // image is taller than screen
+            scale_factor = std::min(static_cast<float>(SCR_WIDTH) / image.w, static_cast<float>(SCR_HEIGHT) / image.h);
+        }
         glm::mat4 trans = glm::scale(mat4(1.0f), vec3(scale_factor, scale_factor, 1.0));
         
         shader->setMat4("model", trans);

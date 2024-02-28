@@ -53,16 +53,16 @@ void Image::loadTexture(int textureSlot){
 void Image::generateVertex(){
 
 
-    float imageAspectRatio = static_cast<float>(w) / static_cast<float>(h);
-    float screenAspectRatio = static_cast<float>(
-            Window::getHeight()) / static_cast<float>(Window::getHeight());
+    // float imageAspectRatio = static_cast<float>(w) / static_cast<float>(h);
+    // float screenAspectRatio = static_cast<float>(
+    //         Window::getHeight()) / static_cast<float>(Window::getHeight());
 
     float scaleFactor = 1.0f;
-    if (imageAspectRatio > screenAspectRatio) {
-        scaleFactor = static_cast<float>(Window::getHeight()) / static_cast<float>(h);
-    } else {
-        scaleFactor = static_cast<float>(Window::getWidth()) / static_cast<float>(w);
-    }
+    // if (h > w) {
+    //     scaleFactor = static_cast<float>(Window::getHeight()) / static_cast<float>(h);
+    // } else {
+    //     scaleFactor = static_cast<float>(Window::getWidth()) / static_cast<float>(w);
+    // }
 
     // Adjust vertex positions to maintain aspect ratio
     float scaledWidth = static_cast<float>(w) * scaleFactor;
