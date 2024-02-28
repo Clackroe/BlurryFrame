@@ -15,10 +15,10 @@ enum CAMERA_TYPE {
 };
 
 // Define the orthographic projection parameters
-const float left = -10.0f;
-const float right = 10.0f;
-const float bottom = -10.0f;
-const float top = 10.0f;
+const float left = -0.5f;
+const float right = 0.5f;
+const float bottom = -0.5f;
+const float top = 0.5f;
 const float nearPlane = 0.1f;
 const float farPlane = 100.0f;
 

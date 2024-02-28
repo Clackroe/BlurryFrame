@@ -48,7 +48,7 @@ IMGUI.make
 GLAD.make
 
 /.vscode
-/test_img
+/content
 
 Blurry.make
 Makefile

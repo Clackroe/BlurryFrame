@@ -6,6 +6,11 @@
 #include "graphics/window.hpp"
 #include "graphics/shader.hpp"
 #include <graphics/camera.hpp>
+#include <string>
+#include <iostream>
+#include <filesystem>
+#include <unistd.h>
+namespace fs = std::filesystem;
 
 
 // settings
@@ -21,19 +26,28 @@ int main()
     Window glWindow = Window(SCR_WIDTH, SCR_HEIGHT, "BlurryFrame");
 
     Shader* shader = new Shader("assets/shaders/basic-vert.glsl", "assets/shaders/basic-frag.glsl");
-    Camera* camera = new Camera(glm::vec3(0.0, 0.0, 20.0), PERSP);
+    Camera* camera = new Camera(glm::vec3(0.0, 0.0, 20.0), ORTHO);
 
     //Texture stuff TODO: ABSTRACT HEAVILY
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);	
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    
-    Image image = Image("test.JPG");
-    Image image2 = Image("test1.png");
 
-    image.loadTexture(0);
-    image2.loadTexture(1);
+    // Image image = Image("content/test6.jpeg");
+    // Image image2 = Image("test1.png");
+
+    // image.loadTexture(0);
+    // image2.loadTexture(1);
+
+    // get all files in content folder
+    std::string path = "content/";
+    // array to hold path names
+    std::vector<std::string> files;
+    for (const auto & entry : fs::directory_iterator(path))
+        files.push_back(entry.path().string());
+
+    std::cout << files[0] << std::endl;
 
     // render loop
     // -----------
@@ -41,31 +55,37 @@ int main()
     while (!glfwWindowShouldClose(glWindow.window))
 
     {
+        int i = rand() % files.size();
+        Image image = Image(files[i].c_str());
+        image.loadTexture(0);
+
         glWindow.frameStart();
         glWindow.Update();
 
         shader->use();
         shader->setInt("image", 0);
-        glm::mat4 trans = glm::scale(mat4(1.0f), vec3(2.0, 2.0, 2.0));
-        trans = rotate(trans, angle, vec3(0.0, 0.0, 1.0));
-        angle += (0.001f * glfwGetTime());
+
+        // image scale based on screen size and image size
+        float scale_factor = 1.0f;
+        if ((image.w / image.h) < (SCR_WIDTH / SCR_HEIGHT)) { // image is wider than screen
+            scale_factor = std::min(static_cast<float>(SCR_WIDTH) / image.w, static_cast<float>(SCR_HEIGHT) / image.h);
+        } else { // image is taller than screen
+            scale_factor = std::min(static_cast<float>(SCR_WIDTH) / image.w, static_cast<float>(SCR_HEIGHT) / image.h);
+        }
+        glm::mat4 trans = glm::scale(mat4(1.0f), vec3(scale_factor, scale_factor, 1.0));
+        
         shader->setMat4("model", trans);
         shader->setMat4("proj", camera->getProjection());
         shader->setMat4("view", camera->getView());
-        image.render();    
-
-        trans = glm::translate(trans, vec3(1.0f, 1.0f + angle, 1.0f));
-
-        shader->setMat4("model", trans);
-
-        shader->setInt("image", 1);
-        image2.render();
+        image.render();
 
         glWindow.frameEnd();
+
+        // sleep 1 seconds
+        sleep(1);
     }
 
 
     delete shader;
     return 0;
 }
-
