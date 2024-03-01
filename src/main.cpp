@@ -7,7 +7,7 @@
 #include "graphics/shader.hpp"
 #include <graphics/camera.hpp>
 #include <string>
-#include <iostream>
+#include <vector>
 #include <filesystem>
 #include <unistd.h>
 namespace fs = std::filesystem;
@@ -57,6 +57,7 @@ int main()
     {
         int i = rand() % files.size();
         Image image = Image(files[i].c_str());
+        image.blur();
         image.loadTexture(0);
 
         glWindow.frameStart();
