@@ -54,4 +54,6 @@ Blurry.make
 Makefile
 .cache
 
+.DS_Store
+
 compile_commands.json
