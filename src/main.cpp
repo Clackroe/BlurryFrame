@@ -22,6 +22,8 @@ const unsigned int SCR_HEIGHT = 1080;
 
 int main()
 {
+
+
     // const GLFWvidmode* mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
     Window glWindow = Window(SCR_WIDTH, SCR_HEIGHT, "blur");
 
@@ -59,7 +61,7 @@ int main()
         Image image = Image(files[i].c_str());
         image.loadTexture(0);
         Image blurImage = Image(files[i].c_str());
-        blurImage.blur(8);
+        blurImage.blur(15, 5.0);
         blurImage.loadTexture(1);
 
         glWindow.frameStart();
@@ -91,13 +93,11 @@ int main()
 
         //NormalImage
         shader->setInt("image", 0);
-
-        float scale_factor= 1.0f;
-        if (glWindow.getWidth() / image.w  > glWindow.getHeight() / image.h){
-            scale_factor = (float)glWindow.getHeight() / (float)image.h;
-        }
-        else {
-            scale_factor = (float)glWindow.getWidth() / (float)image.w;
+        float scale_factor = 1.0f;
+        if ((image.w / image.h) < (SCR_WIDTH / SCR_HEIGHT)) { // image is wider than screen
+            scale_factor = std::min(static_cast<float>(SCR_WIDTH) / image.w, static_cast<float>(SCR_HEIGHT) / image.h);
+        } else { // image is taller than screen
+                scale_factor = std::min(static_cast<float>(SCR_WIDTH) / image.w, static_cast<float>(SCR_HEIGHT) / image.h);
         }
         glm::mat4 trans = glm::scale(mat4(1.0f), vec3(scale_factor, scale_factor, 1.0));
 
@@ -108,7 +108,6 @@ int main()
         image.render();
 
         glWindow.frameEnd();
-
         // sleep 1 seconds
         sleep(1);
     }

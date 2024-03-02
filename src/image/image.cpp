@@ -7,6 +7,7 @@
 #include <vector>
 
 Image::Image(const char* path){
+    Image::path = path;
     pixels = Loader::loadImage(path, &w, &h, &chan);
 }
 Image::~Image(){
@@ -38,9 +39,32 @@ static std::vector<float> genGaussianKernal(int radius,  float sigma){
     return kernal;
 }
 
+//1D Gaussian to take advantage of seperable filters.
+static std::vector<float> genGaussianKernal1D(int radius, float sigma) {
+    std::vector<float> kernel;
+    float sum = 0.0f;
+    for (int i = -radius; i <= radius; ++i) {
+        float x = i;
+        float weight = exp(-x * x / (2 * sigma * sigma)) / (sqrt(2.0f * glm::pi<float>())* sigma);
+        kernel.push_back(weight);
+        sum += weight;
+    }
+    for (float &val : kernel) {
+        val /= sum;
+    }
+    return kernel;
+}
+
+
 static void applyGaussianFilter(const unsigned char* inputPixels, unsigned char* outputPixels,
                                 int width, int height, int channels, int radius, float sigma){
-            std::vector<float> kernel = genGaussianKernal(radius, sigma);
+            //Utilizing seperable filters for optimization.
+            //Without seperability O(N*M*K^2)
+            //With seperability    O(2N*M*K) = O(N*M*K) Faster by a bit.
+            std::vector<float> kernel = genGaussianKernal1D(radius, sigma);
+
+
+            //Apply in the horizontal axis
             for (int y = radius; y < height - radius; ++y) {
                 for (int x = radius; x < width - radius; ++x) {
                     int pixelIndex = (y * width * 3) + x*3;
@@ -50,33 +74,57 @@ static void applyGaussianFilter(const unsigned char* inputPixels, unsigned char*
 
                     float sumWeights = 0.0f;
 
-                    
-
                     int kIndex = 0;
-                    for(int ky = -radius; ky <= radius; ky++){
-                        for(int kx = -radius; kx <= radius; kx++){
-                           int kPIndex = ((y + ky)* width * channels) + (x+kx)*channels; 
+                    for(int kx = -radius; kx <= radius; kx++){
+                           int kPIndex = ((y)* width * channels) + (x+kx)*channels; 
                            sumR += inputPixels[kPIndex + 0] * kernel[kIndex]; 
                            sumG += inputPixels[kPIndex + 1] * kernel[kIndex]; 
                            sumB += inputPixels[kPIndex + 2] * kernel[kIndex]; 
                             sumWeights += kernel[kIndex];
                             kIndex++;
-                        }
                         
                     }
-                    // printf("SumR: %f", sumR/sumWeights);
 
                     pixelIndex = ((y-radius) * (width - radius*2) * 3) + (x-radius)*3;
-                    outputPixels[pixelIndex + 0] =      glm::clamp((sumR / sumWeights), 0.0f, 255.0f);
-                    outputPixels[pixelIndex + 1] =      glm::clamp((sumG / sumWeights), 0.0f, 255.0f);
-                    outputPixels[pixelIndex + 2] =      glm::clamp((sumB / sumWeights), 0.0f, 255.0f);
+                    outputPixels[pixelIndex + 0] = glm::clamp((sumR / sumWeights), 0.0f, 255.0f);
+                    outputPixels[pixelIndex + 1] = glm::clamp((sumG / sumWeights), 0.0f, 255.0f);
+                    outputPixels[pixelIndex + 2] = glm::clamp((sumB / sumWeights), 0.0f, 255.0f);
+        }
+    }
+
+
+            //Apply kernel in the vertical.
+            for (int y = radius; y < height - radius; ++y) {
+                for (int x = radius; x < width - radius; ++x) {
+                    int pixelIndex = (y * width * 3) + x*3;
+                    float sumR = 0.0f;
+                    float sumG = 0.0f;
+                    float sumB = 0.0f;
+
+                    float sumWeights = 0.0f;
+
+                    int kIndex = 0;
+                    for(int ky = -radius; ky <= radius; ky++){
+                           int kPIndex = ((y + ky - radius)* (width-radius*2)* channels) + (x-radius)*channels; 
+                           sumR += outputPixels[kPIndex + 0] * kernel[kIndex]; 
+                           sumG += outputPixels[kPIndex + 1] * kernel[kIndex]; 
+                           sumB += outputPixels[kPIndex + 2] * kernel[kIndex]; 
+                            sumWeights += kernel[kIndex];
+                            kIndex++;
+                        
+                    }
+
+                    pixelIndex = ((y-radius) * (width - radius*2) * 3) + (x-radius)*3;
+                    outputPixels[pixelIndex + 0] = glm::clamp((sumR / sumWeights), 0.0f, 255.0f);
+                    outputPixels[pixelIndex + 1] = glm::clamp((sumG / sumWeights), 0.0f, 255.0f);
+                    outputPixels[pixelIndex + 2] = glm::clamp((sumB / sumWeights), 0.0f, 255.0f);
         }
     }
 }
 
 
-void Image::blur(int rad){
-    float sigma = (rad - 1.0f)/6;
+void Image::blur(int rad, float sigma){
+    std::cout << "Path: " << path << std::endl;
     unsigned char *outputPixels = new unsigned char[(w-rad*2) * (h-rad*2)* 3];
     applyGaussianFilter(pixels, outputPixels, w, h, chan, rad, sigma);
     w -= rad*2;
