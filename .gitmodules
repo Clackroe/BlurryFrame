@@ -10,3 +10,7 @@
 [submodule "libs/glad"]
 	path = libs/glad
 	url = https://github.com/Clackroe/GLAD-Old.git
+[submodule "libs/exiv2"]
+	path = libs/exiv2
+	url = https://github.com/Exiv2/exiv2.git
+	branch = 0.28.x
