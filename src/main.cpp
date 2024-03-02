@@ -57,13 +57,39 @@ int main()
     {
         int i = rand() % files.size();
         Image image = Image(files[i].c_str());
-        image.blur();
         image.loadTexture(0);
+        Image blurImage = Image(files[i].c_str());
+        blurImage.blur();
+        blurImage.loadTexture(1);
 
         glWindow.frameStart();
         glWindow.Update();
 
+
+
+        //BlureImage
+
+        float blur_scale= 1.0f;
+        if (SCR_WIDTH / blurImage.w  < SCR_HEIGHT / blurImage.h){
+            blur_scale = (float)SCR_HEIGHT / (float)blurImage.h;
+        }
+        else {
+            blur_scale = (float)SCR_WIDTH / (float)blurImage.w;
+        }
+        glm::mat4 trans_blur = glm::scale(mat4(1.0f), vec3(blur_scale, blur_scale, 1.0));
+
         shader->use();
+        shader->setInt("image", 1);
+
+        shader->setMat4("model", trans_blur);
+        shader->setMat4("proj", camera->getProjection());
+        shader->setMat4("view", camera->getView());
+        blurImage.render();
+        
+
+
+
+        //NormalImage
         shader->setInt("image", 0);
 
         // image scale based on screen size and image size
