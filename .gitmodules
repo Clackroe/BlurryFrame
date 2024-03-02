@@ -1,0 +1,9 @@
+[submodule "libs/imgui"]
+	path = libs/imgui
+	url = https://github.com/Clackroe/IMGUI-Old.git
+[submodule "libs/glm"]
+	path = libs/glm
+	url = https://github.com/Clackroe/GLM-Old.git
+[submodule "libs/glfw"]
+	path = libs/glfw
+	url = https://github.com/Clackroe/GLFW-Old.git
