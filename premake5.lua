@@ -23,7 +23,7 @@ project "Blurry"
     targetdir "bin/%{cfg.buildcfg}"
     objdir "obj/%{cfg.buildcfg}"
 
-    includedirs {"include/", "libs/glad/include/", "libs/glfw/include/", "libs/glm/"}
+    includedirs {"include/", "libs/glad/include/", "libs/glfw/include/", "libs/glm/", "libs/imgui/"}
     
     files {
         "src/**.cpp",
@@ -34,7 +34,7 @@ project "Blurry"
     }
 
     if os.host() == "linux" then
-        links { "GLFW", "GLAD", "GLM", "dl", "pthread" }
+        links { "IMGUI", "GLFW", "GLAD", "GLM", "dl", "pthread" }
         defines { "_X11" }
         include "libs/glfw.lua"
         include "libs/glad.lua"
@@ -42,13 +42,13 @@ project "Blurry"
     end
     
     if os.host() == "windows" then
-        links { "GLFW", "GLAD", "GLM" }
+        links { "GLFW", "GLAD", "GLM", "IMGUI" }
         defines { "_WINDOWS" }
         include "libs/glfw.lua"
     end
     
     if os.host() == "macosx" then
-        links {"libs/glfw.3.3", "GLAD", "GLM"}
+        links {"libs/glfw.3.3", "IMGUI", "GLAD", "GLM"}
         defines { "_GLFW_COCOA" }
     end
     
