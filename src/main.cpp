@@ -41,11 +41,6 @@ int main()
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-    // Image image = Image("content/test6.jpeg");
-    // Image image2 = Image("test1.png");
-
-    // image.loadTexture(0);
-    // image2.loadTexture(1);
 
     // get all files in content folder
     std::string path = "content/";
@@ -66,7 +61,7 @@ int main()
     Image image = Image(files[i].c_str());
     Image blurImage = Image(files[i].c_str());
     image.loadTexture(0);
-    // blurImage.blur(15, 5.0);
+    blurImage.blur(15, 5.0);
     blurImage.loadTexture(1);
 
 
