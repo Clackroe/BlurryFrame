@@ -57,3 +57,5 @@ Makefile
 .DS_Store
 
 compile_commands.json
+
+imgui.ini
