@@ -101,14 +101,6 @@ int main()
         }
         glm::mat4 trans = glm::scale(mat4(1.0f), vec3(scale_factor, scale_factor, 1.0));
 
-        // image scale based on screen size and image size
-        // float scale_factor = 1.0f;
-        // if ((image.w / image.h) < (SCR_WIDTH / SCR_HEIGHT)) { // image is wider than screen
-        //     scale_factor = std::min(static_cast<float>(SCR_WIDTH) / image.w, static_cast<float>(SCR_HEIGHT) / image.h);
-        // } else { // image is taller than screen
-        //     scale_factor = std::min(static_cast<float>(SCR_WIDTH) / image.w, static_cast<float>(SCR_HEIGHT) / image.h);
-        // }
-        // glm::mat4 trans = glm::scale(mat4(1.0f), vec3(scale_factor, scale_factor, 1.0));
         
         shader->setMat4("model", trans);
         shader->setMat4("proj", camera->getProjection());
