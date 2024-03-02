@@ -1,6 +1,10 @@
+#include "glm/ext/scalar_constants.hpp"
 #include "image/image_loader.h"
 #include <image/image.hpp>
 #include "graphics/window.hpp"
+#include <iostream>
+#include <ostream>
+#include <vector>
 
 Image::Image(const char* path){
     pixels = Loader::loadImage(path, &w, &h, &chan);
@@ -9,6 +13,76 @@ Image::~Image(){
     glDeleteVertexArrays(1, &VAO);
     glDeleteBuffers(1, &VBO);
     glDeleteBuffers(1, &EBO);
+}
+
+
+static std::vector<float> genGaussianKernal(int radius,  float sigma){
+    std::vector<float> kernal;
+    float sum = 0.0f;
+    for (int i = -radius; i <= radius; ++i){
+        for (int j = -radius; j <= radius; ++j){
+            int x = i; 
+            int y = j;
+            float v = x * x + y * y;
+            float weight = exp(-v / (2 * sigma * sigma)) / (2 * glm::pi<float>() * sigma * sigma);
+            kernal.push_back(weight);
+            // std::cout << weight << " ";
+            sum += weight;
+        }
+        // std::cout << std::endl;
+    }
+    for (float &val: kernal){
+        // val /= sum;
+    }
+
+    return kernal;
+}
+
+static void applyGaussianFilter(const unsigned char* inputPixels, unsigned char* outputPixels,
+                                int width, int height, int channels, int radius, float sigma){
+            std::vector<float> kernel = genGaussianKernal(radius, sigma);
+            for (int y = radius; y < height - radius; ++y) {
+                for (int x = radius; x < width - radius; ++x) {
+                    int pixelIndex = (y * width * 3) + x*3;
+                    float sumR = 0.0f;
+                    float sumG = 0.0f;
+                    float sumB = 0.0f;
+
+                    float sumWeights = 0.0f;
+
+                    
+
+                    int kIndex = 0;
+                    for(int ky = -radius; ky <= radius; ky++){
+                        for(int kx = -radius; kx <= radius; kx++){
+                           int kPIndex = ((y + ky)* width * channels) + (x+kx)*channels; 
+                           sumR += inputPixels[kPIndex + 0] * kernel[kIndex]; 
+                           sumG += inputPixels[kPIndex + 1] * kernel[kIndex]; 
+                           sumB += inputPixels[kPIndex + 2] * kernel[kIndex]; 
+                            sumWeights += kernel[kIndex];
+                            kIndex++;
+                        }
+                        
+                    }
+                    // printf("SumR: %f", sumR/sumWeights);
+
+                    pixelIndex = ((y-radius) * (width - radius*2) * 3) + (x-radius)*3;
+                    outputPixels[pixelIndex + 0] =      glm::clamp((sumR / sumWeights), 0.0f, 255.0f);
+                    outputPixels[pixelIndex + 1] =      glm::clamp((sumG / sumWeights), 0.0f, 255.0f);
+                    outputPixels[pixelIndex + 2] =      glm::clamp((sumB / sumWeights), 0.0f, 255.0f);
+        }
+    }
+}
+
+
+void Image::blur(int rad){
+    float sigma = (rad - 1.0f)/6;
+    unsigned char *outputPixels = new unsigned char[(w-rad*2) * (h-rad*2)* 3];
+    applyGaussianFilter(pixels, outputPixels, w, h, chan, rad, sigma);
+    w -= rad*2;
+    h -= rad*2;
+    Loader::freePixels(pixels);
+    pixels = outputPixels;
 }
 
 void Image::render(){

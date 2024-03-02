@@ -25,6 +25,8 @@ public:
     void render();
     void frameEnd();
 
+    void blur(int rad);
+
 private:
     void generateVertex();
     unsigned int VBO, VAO, EBO;

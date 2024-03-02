@@ -7,7 +7,7 @@
 #include "graphics/shader.hpp"
 #include <graphics/camera.hpp>
 #include <string>
-#include <iostream>
+#include <vector>
 #include <filesystem>
 #include <unistd.h>
 namespace fs = std::filesystem;
@@ -58,21 +58,49 @@ int main()
         int i = rand() % files.size();
         Image image = Image(files[i].c_str());
         image.loadTexture(0);
+        Image blurImage = Image(files[i].c_str());
+        blurImage.blur(8);
+        blurImage.loadTexture(1);
 
         glWindow.frameStart();
         glWindow.Update();
 
+
+
+        //BlureImage
+
+        float blur_scale= 1.0f;
+        if (glWindow.getWidth() / blurImage.w  < glWindow.getHeight() / blurImage.h){
+            blur_scale = (float)glWindow.getHeight() / (float)blurImage.h;
+        }
+        else {
+            blur_scale = (float)glWindow.getWidth() / (float)blurImage.w;
+        }
+        glm::mat4 trans_blur = glm::scale(mat4(1.0f), vec3(blur_scale, blur_scale, 1.0));
+
         shader->use();
+        shader->setInt("image", 1);
+
+        shader->setMat4("model", trans_blur);
+        shader->setMat4("proj", camera->getProjection());
+        shader->setMat4("view", camera->getView());
+        blurImage.render();
+        
+
+
+
+        //NormalImage
         shader->setInt("image", 0);
 
-        // image scale based on screen size and image size
-        float scale_factor = 1.0f;
-        if ((image.w / image.h) < (SCR_WIDTH / SCR_HEIGHT)) { // image is wider than screen
-            scale_factor = std::min(static_cast<float>(SCR_WIDTH) / image.w, static_cast<float>(SCR_HEIGHT) / image.h);
-        } else { // image is taller than screen
-            scale_factor = std::min(static_cast<float>(SCR_WIDTH) / image.w, static_cast<float>(SCR_HEIGHT) / image.h);
+        float scale_factor= 1.0f;
+        if (glWindow.getWidth() / image.w  > glWindow.getHeight() / image.h){
+            scale_factor = (float)glWindow.getHeight() / (float)image.h;
+        }
+        else {
+            scale_factor = (float)glWindow.getWidth() / (float)image.w;
         }
         glm::mat4 trans = glm::scale(mat4(1.0f), vec3(scale_factor, scale_factor, 1.0));
+
         
         shader->setMat4("model", trans);
         shader->setMat4("proj", camera->getProjection());
