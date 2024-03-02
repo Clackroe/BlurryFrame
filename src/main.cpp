@@ -9,7 +9,12 @@
 #include <string>
 #include <vector>
 #include <filesystem>
+#include <vector>
 #include <unistd.h>
+#include <imgui.h>
+#include <backends/imgui_impl_glfw.h>
+#include <backends/imgui_impl_opengl3.h>
+
 namespace fs = std::filesystem;
 
 
@@ -50,6 +55,20 @@ int main()
         files.push_back(entry.path().string());
 
     std::cout << files[0] << std::endl;
+    
+    ImGui::CreateContext();
+    ImGui_ImplGlfw_InitForOpenGL(glWindow.window, true);
+    ImGui_ImplOpenGL3_Init("#version 330");
+
+    ImGui::StyleColorsDark();
+
+    int i = rand() % files.size();
+    Image image = Image(files[i].c_str());
+    Image blurImage = Image(files[i].c_str());
+    image.loadTexture(0);
+    // blurImage.blur(15, 5.0);
+    blurImage.loadTexture(1);
+
 
     // render loop
     // -----------
@@ -57,18 +76,22 @@ int main()
     while (!glfwWindowShouldClose(glWindow.window))
 
     {
-        int i = rand() % files.size();
-        Image image = Image(files[i].c_str());
-        image.loadTexture(0);
-        Image blurImage = Image(files[i].c_str());
-        blurImage.blur(15, 5.0);
-        blurImage.loadTexture(1);
+
+
 
         glWindow.frameStart();
         glWindow.Update();
 
+        ImGui_ImplOpenGL3_NewFrame();
+        ImGui_ImplGlfw_NewFrame();
+        ImGui::NewFrame();
 
+        ImGui::Begin("Blur");
+        ImGui::Text("Blurryyyy");
+        ImGui::Text("FPS: %f", ImGui::GetIO().Framerate);
+        ImGui::End();
 
+        ImGui::Render();
         //BlureImage
 
         float blur_scale= 1.0f;
@@ -107,11 +130,15 @@ int main()
         shader->setMat4("view", camera->getView());
         image.render();
 
+        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
         glWindow.frameEnd();
         // sleep 1 seconds
-        sleep(1);
+        // sleep(1);
     }
 
+    ImGui_ImplOpenGL3_Shutdown();
+    ImGui_ImplGlfw_Shutdown();
+    ImGui::DestroyContext();
 
     delete shader;
     return 0;

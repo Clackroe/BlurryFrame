@@ -25,9 +25,10 @@ public:
     void render();
     void frameEnd();
 
-    void blur(int rad);
+    void blur(int rad, float sigma);
 
 private:
+    const char* path;
     void generateVertex();
     unsigned int VBO, VAO, EBO;
 
