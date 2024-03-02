@@ -75,10 +75,10 @@ static void applyGaussianFilter(const unsigned char* inputPixels, unsigned char*
 }
 
 
-void Image::blur(){
-    int rad = 6;
+void Image::blur(int rad){
+    float sigma = (rad - 1.0f)/6;
     unsigned char *outputPixels = new unsigned char[(w-rad*2) * (h-rad*2)* 3];
-    applyGaussianFilter(pixels, outputPixels, w, h, chan, 6, 5.0f);
+    applyGaussianFilter(pixels, outputPixels, w, h, chan, rad, sigma);
     w -= rad*2;
     h -= rad*2;
     Loader::freePixels(pixels);

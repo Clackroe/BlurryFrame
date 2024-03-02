@@ -25,7 +25,7 @@ public:
     void render();
     void frameEnd();
 
-    void blur();
+    void blur(int rad);
 
 private:
     void generateVertex();
