@@ -13,7 +13,7 @@
 #include <unistd.h>
 #include <vector>
 
-namespace fs = std::filesystem;
+// namespace fs = std::filesystem;
 
 // settings
 // const unsigned int SCR_WIDTH = 435;
@@ -40,7 +40,7 @@ int main()
     std::string path = "content/";
     // array to hold path names
     std::vector<std::string> files;
-    for (const auto& entry : fs::directory_iterator(path))
+    for (const auto& entry : std::filesystem::directory_iterator(path))
         files.push_back(entry.path().string());
 
     std::cout << files[0] << std::endl;
