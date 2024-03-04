@@ -12,6 +12,8 @@
 #include <string>
 #include <unistd.h>
 #include <vector>
+// delta time
+#include <chrono>
 
 // namespace fs = std::filesystem;
 
@@ -41,20 +43,33 @@ int main()
     for (const auto& entry : std::filesystem::directory_iterator(path))
         files.push_back(entry.path().string());
 
-    std::cout << files[0] << std::endl;
-
     ImGui::CreateContext();
     ImGui_ImplGlfw_InitForOpenGL(glWindow.window, true);
     ImGui_ImplOpenGL3_Init("#version 330");
 
     ImGui::StyleColorsDark();
 
-    int i = rand() % files.size();
+    int i = 2;
     Image image = Image(files[i].c_str());
     Image blurImage = Image(files[i].c_str());
     image.loadTexture(0);
     blurImage.blur(15, 5.0);
     blurImage.loadTexture(1);
+
+    std::cout << "Image width: " << image.w << " Image height: " << image.h << std::endl;
+
+    // function to switch images
+    auto switchImage = [&]() {
+        i++;
+        if (i >= files.size()) {
+            i = 0;
+        }
+        image = Image(files[i].c_str());
+        blurImage = Image(files[i].c_str());
+        image.loadTexture(0);
+        blurImage.blur(15, 5.0);
+        blurImage.loadTexture(1);
+    };
 
     // render loop
     // -----------
@@ -111,6 +126,7 @@ int main()
 
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
         glWindow.frameEnd();
+        switchImage();
     }
 
     ImGui_ImplOpenGL3_Shutdown();
