@@ -37,7 +37,7 @@ int main()
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
     // get all files in content folder
-    std::string path = "content/";
+    std::string path = "/home/pi/Pictures/Italy24";
     // array to hold path names
     std::vector<std::string> files;
     for (const auto& entry : std::filesystem::directory_iterator(path))

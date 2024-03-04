@@ -27,6 +27,8 @@ Window::Window(int SCR_WIDTH, int SCR_HEIGHT, const char* title){
     Window::SCR_WIDTH = SCR_WIDTH;
     Window::SCR_HEIGHT = SCR_HEIGHT;
 
+    glfwSetErrorCallback(errorCallback);
+
     if (!glfwInit()) {
         // Initialization failed
         std::cerr << "Failed to initialize GLFW" << std::endl;
@@ -107,7 +109,7 @@ void Window::initOpenGL(){
     //done. This ensures that it knows to expect textures fully packed.
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1); 
 
-    std::cout << "OpenGL VS: " << glGetString(GL_VERSION) << std::endl;
+    // std::cout << "OpenGL VS: " << glGetString(GL_VERSION) << std::endl;
 
 }
 
