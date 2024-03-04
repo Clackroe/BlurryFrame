@@ -54,6 +54,7 @@ GLAD.make
 Blurry.make
 Makefile
 .cache
+CMakeCache.txt
 
 .DS_Store
 
