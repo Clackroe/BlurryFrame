@@ -34,7 +34,7 @@
 # Build Stuff
 
 bin/
-build/
+build/*
 obj/
 
 glm.make
