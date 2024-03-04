@@ -55,6 +55,7 @@ Blurry.make
 Makefile
 .cache
 CMakeCache.txt
+Blur
 
 .DS_Store
 
