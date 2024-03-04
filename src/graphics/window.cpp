@@ -22,11 +22,8 @@ static void processInput(GLFWwindow *window)
         glfwSetWindowShouldClose(window, true);
 }
 
-Window::Window(int SCR_WIDTH, int SCR_HEIGHT, const char* title){
+Window::Window(const char* title){
     
-    Window::SCR_WIDTH = SCR_WIDTH;
-    Window::SCR_HEIGHT = SCR_HEIGHT;
-
     glfwSetErrorCallback(errorCallback);
 
     if (!glfwInit()) {
@@ -41,7 +38,10 @@ Window::Window(int SCR_WIDTH, int SCR_HEIGHT, const char* title){
 #ifdef __APPLE__ // MacOS is so silly
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 #endif
-    window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, title, NULL, NULL);
+    const GLFWvidmode* mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
+    Window::SCR_WIDTH = mode->width;
+    Window::SCR_HEIGHT = mode->height;
+    window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, title, glfwGetPrimaryMonitor(), NULL);
     if (window == NULL)
     {
         std::cerr << "Failed to create GLFW window" << std::endl;

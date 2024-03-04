@@ -16,16 +16,14 @@
 // namespace fs = std::filesystem;
 
 // settings
-// const unsigned int SCR_WIDTH = 435;
-// const unsigned int SCR_HEIGHT = 121;
-const unsigned int SCR_WIDTH = 1920;
-const unsigned int SCR_HEIGHT = 1080;
+// const unsigned int SCR_WIDTH = NULL;
+// const unsigned int SCR_HEIGHT = NULL;
 
 int main()
 {
 
     // const GLFWvidmode* mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
-    Window glWindow = Window(SCR_WIDTH, SCR_HEIGHT, "blur");
+    Window glWindow = Window("blur");
 
     Shader* shader = new Shader("assets/shaders/basic-vert.glsl", "assets/shaders/basic-frag.glsl");
     Camera* camera = new Camera(glm::vec3(0.0, 0.0, 20.0), ORTHO);
@@ -37,7 +35,7 @@ int main()
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
     // get all files in content folder
-    std::string path = "/home/pi/Pictures/Italy24";
+    std::string path = "content/";
     // array to hold path names
     std::vector<std::string> files;
     for (const auto& entry : std::filesystem::directory_iterator(path))
@@ -99,10 +97,10 @@ int main()
         // NormalImage
         shader->setInt("image", 0);
         float scale_factor = 1.0f;
-        if ((image.w / image.h) < (SCR_WIDTH / SCR_HEIGHT)) { // image is wider than screen
-            scale_factor = std::min(static_cast<float>(SCR_WIDTH) / image.w, static_cast<float>(SCR_HEIGHT) / image.h);
+        if ((image.w / image.h) < (glWindow.getHeight() / glWindow.getWidth())) { // image is wider than screen
+            scale_factor = std::min(static_cast<float>(glWindow.getWidth()) / image.w, static_cast<float>(glWindow.getHeight()) / image.h);
         } else { // image is taller than screen
-            scale_factor = std::min(static_cast<float>(SCR_WIDTH) / image.w, static_cast<float>(SCR_HEIGHT) / image.h);
+            scale_factor = std::min(static_cast<float>(glWindow.getWidth()) / image.w, static_cast<float>(glWindow.getHeight()) / image.h);
         }
         glm::mat4 trans = glm::scale(mat4(1.0f), vec3(scale_factor, scale_factor, 1.0));
 
@@ -113,8 +111,6 @@ int main()
 
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
         glWindow.frameEnd();
-        // sleep 1 seconds
-        // sleep(1);
     }
 
     ImGui_ImplOpenGL3_Shutdown();
