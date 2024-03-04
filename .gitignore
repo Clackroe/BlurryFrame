@@ -49,6 +49,7 @@ GLAD.make
 
 /.vscode
 /content
+/CMakeFiles
 
 Blurry.make
 Makefile
