@@ -1,32 +1,25 @@
-#include "glm/ext/matrix_transform.hpp"
-#include "glm/ext/vector_float3.hpp"
+// #include "glm/ext/matrix_transform.hpp"
+// #include "glm/ext/vector_float3.hpp"
 #include "graphics/shader.hpp"
 #include "graphics/window.hpp"
 #include "image/image.hpp"
 #include <backends/imgui_impl_glfw.h>
 #include <backends/imgui_impl_opengl3.h>
-#include <filesystem>
 #include <graphics/camera.hpp>
-#include <image/image_loader.h>
 #include <iostream>
-#include <string>
 #include <unistd.h>
-#include <vector>
-// delta time
-#include <chrono>
+#include <thread>
+#include <algorithm>
 
-// namespace fs = std::filesystem;
+void renderImage(int shuffledIndecies[]);
+Image* image;
+Image* blurImage;
+int currentImageIndex;
+std::vector<std::string> files;
 
-// settings
-// const unsigned int SCR_WIDTH = NULL;
-// const unsigned int SCR_HEIGHT = NULL;
-
-int main()
-{
-
-    // const GLFWvidmode* mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
+int main() {
+    // Window creation
     Window glWindow = Window("blur");
-
     Shader* shader = new Shader("assets/shaders/basic-vert.glsl", "assets/shaders/basic-frag.glsl");
     Camera* camera = new Camera(glm::vec3(0.0, 0.0, 20.0), ORTHO);
 
@@ -36,48 +29,46 @@ int main()
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
+    std::cout << "test" << std::endl;
     // get all files in content folder
     std::string path = "content/";
-    // array to hold path names
-    std::vector<std::string> files;
-    for (const auto& entry : std::filesystem::directory_iterator(path))
-        files.push_back(entry.path().string());
+    // get all files that are images
+    for (const auto& entry : std::filesystem::directory_iterator
+    (path)) {
+        if (entry.path().extension() == ".jpg" || entry.path().extension() == ".png" || entry.path().extension() == ".jpeg" || entry.path().extension() == ".JPG") {
+            files.push_back(entry.path().string());
+        }
+    }
 
     ImGui::CreateContext();
     ImGui_ImplGlfw_InitForOpenGL(glWindow.window, true);
     ImGui_ImplOpenGL3_Init("#version 330");
-
     ImGui::StyleColorsDark();
 
-    int i = 2;
-    Image image = Image(files[i].c_str());
-    Image blurImage = Image(files[i].c_str());
-    image.loadTexture(0);
-    blurImage.blur(15, 5.0);
-    blurImage.loadTexture(1);
+    // render first image
+    currentImageIndex = 0;
+    int sizeOfFiles = files.size();
+    int shuffledIndecies[sizeOfFiles];
+    for (int i = 0; i < sizeOfFiles; i++) {
+        shuffledIndecies[i] = i;
+    }
+    // shuffle the indecies
+    for (int i = 0; i < sizeOfFiles; i++) {
+        int randomIndex = rand() % sizeOfFiles;
+        int temp = shuffledIndecies[i];
+        shuffledIndecies[i] = shuffledIndecies[randomIndex];
+        shuffledIndecies[randomIndex] = temp;
+    }
 
-    std::cout << "Image width: " << image.w << " Image height: " << image.h << std::endl;
+    // print the shuffled indecies
+    for (int i = 0; i < sizeOfFiles; i++) {
+        std::cout << shuffledIndecies[i] << std::endl;
+    }
 
-    // function to switch images
-    auto switchImage = [&]() {
-        i++;
-        if (i >= files.size()) {
-            i = 0;
-        }
-        image = Image(files[i].c_str());
-        blurImage = Image(files[i].c_str());
-        image.loadTexture(0);
-        blurImage.blur(15, 5.0);
-        blurImage.loadTexture(1);
-    };
+    renderImage(shuffledIndecies);
 
-    // render loop
-    // -----------
-    float angle = 0.0;
-    while (!glfwWindowShouldClose(glWindow.window))
-
-    {
-
+    int counterToKeepTime = 0;
+    while (!glfwWindowShouldClose(glWindow.window)) {
         glWindow.frameStart();
         glWindow.Update();
 
@@ -85,19 +76,19 @@ int main()
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
 
-        ImGui::Begin("Blur");
-        ImGui::Text("Blurryyyy");
-        ImGui::Text("FPS: %f", ImGui::GetIO().Framerate);
-        ImGui::End();
+        // ImGui::Begin("Blur");
+        // ImGui::Text("Blurryyyy");           ****I DONT LIKE THIS IT UGLY!!!!!!*****
+        // ImGui::Text("FPS: %f", ImGui::GetIO().Framerate);
+        // ImGui::End();
 
         ImGui::Render();
-        // BlureImage
 
+        // BlureImage
         float blur_scale = 1.0f;
-        if (glWindow.getWidth() / blurImage.w < glWindow.getHeight() / blurImage.h) {
-            blur_scale = (float)glWindow.getHeight() / (float)blurImage.h;
+        if (glWindow.getWidth() / blurImage->w < glWindow.getHeight() / blurImage->h) {
+            blur_scale = (float)glWindow.getHeight() / (float)blurImage->h;
         } else {
-            blur_scale = (float)glWindow.getWidth() / (float)blurImage.w;
+            blur_scale = (float)glWindow.getWidth() / (float)blurImage->w;
         }
         glm::mat4 trans_blur = glm::scale(mat4(1.0f), vec3(blur_scale, blur_scale, 1.0));
 
@@ -107,32 +98,45 @@ int main()
         shader->setMat4("model", trans_blur);
         shader->setMat4("proj", camera->getProjection());
         shader->setMat4("view", camera->getView());
-        blurImage.render();
+        blurImage->render();
 
         // NormalImage
         shader->setInt("image", 0);
         float scale_factor = 1.0f;
-        if ((image.w / image.h) < (glWindow.getHeight() / glWindow.getWidth())) { // image is wider than screen
-            scale_factor = std::min(static_cast<float>(glWindow.getWidth()) / image.w, static_cast<float>(glWindow.getHeight()) / image.h);
+        if ((image->w / image->h) < (glWindow.getHeight() / glWindow.getWidth())) { // image is wider than screen
+            scale_factor = std::min(static_cast<float>(glWindow.getWidth()) / image->w, static_cast<float>(glWindow.getHeight()) / image->h);
         } else { // image is taller than screen
-            scale_factor = std::min(static_cast<float>(glWindow.getWidth()) / image.w, static_cast<float>(glWindow.getHeight()) / image.h);
+            scale_factor = std::min(static_cast<float>(glWindow.getWidth()) / image->w, static_cast<float>(glWindow.getHeight()) / image->h);
         }
         glm::mat4 trans = glm::scale(mat4(1.0f), vec3(scale_factor, scale_factor, 1.0));
 
         shader->setMat4("model", trans);
         shader->setMat4("proj", camera->getProjection());
         shader->setMat4("view", camera->getView());
-        image.render();
+        image->render();
 
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
         glWindow.frameEnd();
-        switchImage();
+
+        if (counterToKeepTime == 18000) {
+            counterToKeepTime = 0;
+            renderImage(shuffledIndecies);
+        }
+        counterToKeepTime++;
     }
 
     ImGui_ImplOpenGL3_Shutdown();
     ImGui_ImplGlfw_Shutdown();
     ImGui::DestroyContext();
-
     delete shader;
     return 0;
+}
+
+void renderImage(int shuffledIndecies[]) {
+    currentImageIndex++;
+    image = new Image(files[shuffledIndecies[currentImageIndex]].c_str());
+    blurImage = new Image(files[shuffledIndecies[currentImageIndex]].c_str());
+    image->loadTexture(0);
+    blurImage->blur(45, 15.0);
+    blurImage->loadTexture(1);
 }
