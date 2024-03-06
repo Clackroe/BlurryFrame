@@ -31,7 +31,6 @@ int main() {
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-    std::cout << "test" << std::endl;
     // get all files in content folder
     std::string path = "content/";
     // get all files that are images
@@ -60,11 +59,6 @@ int main() {
         int temp = shuffledIndecies[i];
         shuffledIndecies[i] = shuffledIndecies[randomIndex];
         shuffledIndecies[randomIndex] = temp;
-    }
-
-    // print the shuffled indecies
-    for (int i = 0; i < sizeOfFiles; i++) {
-        std::cout << shuffledIndecies[i] << std::endl;
     }
 
     renderImage(shuffledIndecies);
