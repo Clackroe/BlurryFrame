@@ -65,7 +65,6 @@ int main() {
 
     int counterToKeepTime = 0;
     while (!glfwWindowShouldClose(glWindow.window)) {
-        std::cout << "Displaying image" << std::endl;
         glWindow.frameStart();
         glWindow.Update();
 
