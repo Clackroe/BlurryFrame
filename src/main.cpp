@@ -65,6 +65,7 @@ int main() {
 
     int counterToKeepTime = 0;
     while (!glfwWindowShouldClose(glWindow.window)) {
+        std::cout << "Displaying image" << std::endl;
         glWindow.frameStart();
         glWindow.Update();
 
@@ -133,6 +134,6 @@ void renderImage(int shuffledIndecies[]) {
     image = new Image(files[shuffledIndecies[currentImageIndex]].c_str());
     blurImage = new Image(files[shuffledIndecies[currentImageIndex]].c_str());
     image->loadTexture(0);
-    blurImage->blur(45, 15.0);
+    blurImage->blur(15, 5.0);
     blurImage->loadTexture(1);
 }
