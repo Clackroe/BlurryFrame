@@ -10,6 +10,8 @@
 #include <unistd.h>
 #include <thread>
 #include <algorithm>
+#include <vector>
+#include <filesystem>
 
 void renderImage(int shuffledIndecies[]);
 Image* image;
