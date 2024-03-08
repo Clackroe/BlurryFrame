@@ -36,6 +36,7 @@
 bin/
 build/*
 obj/
+out/
 
 glm.make
 glfw.make
@@ -62,3 +63,4 @@ Blur
 compile_commands.json
 
 imgui.ini
+cmake_install.cmake
