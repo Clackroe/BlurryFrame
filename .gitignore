@@ -34,8 +34,9 @@
 # Build Stuff
 
 bin/
-build/
+build/*
 obj/
+out/
 
 glm.make
 glfw.make
@@ -49,13 +50,17 @@ GLAD.make
 
 /.vscode
 /content
+/CMakeFiles
 
 Blurry.make
 Makefile
 .cache
+CMakeCache.txt
+Blur
 
 .DS_Store
 
 compile_commands.json
 
 imgui.ini
+cmake_install.cmake

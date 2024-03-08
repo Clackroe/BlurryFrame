@@ -9,7 +9,7 @@
 class Window {
 public:
 
-    Window(int SCR_WIDTH, int SCR_HEIGHT, const char* title);
+    Window(const char* title);
     ~Window();
 
     static int getWidth();
