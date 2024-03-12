@@ -1,8 +1,8 @@
 #ifndef IMAGE_H
 #define IMAGE_H
-#include <image/image_loader.h>
 #include <glad/glad.h>
 #include <glm/glm.hpp>
+#include <image/image_loader.h>
 
 struct Vertex {
     glm::vec3 pos;
@@ -27,17 +27,18 @@ public:
 
     void blur(int rad, float sigma);
 
+    unsigned int VBO, VAO, EBO;
+
+    glm::vec3 position, rotation, scale;
+
+    glm::mat4 getRotationMat() { return rotationMatrix; };
+    glm::mat4 getScaleMat() { return scaleMatrix; };
+    glm::mat4 getPositionMat() { return positionMatrix; };
+
 private:
     const char* path;
     void generateVertex();
-    unsigned int VBO, VAO, EBO;
-
-
-
-
+    glm::mat4 rotationMatrix, scaleMatrix, positionMatrix;
 };
 
-
-
 #endif
-

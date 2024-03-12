@@ -22,8 +22,7 @@ Shader::Shader(const char* vertexPath, const char* fragPath)
 
         vertexSourceCode = vShaderStream.str();
         fragmentSourceCode = fShaderStream.str();
-    }
-    catch (std::ifstream::failure err) {
+    } catch (std::ifstream::failure err) {
         // std::cerr << "Current Path: " << std::filesystem::current_path() << std::endl;
         std::cerr << "ERROR WITH READING THE SHADER FILES: " << err.what() << std::endl;
     }
@@ -39,20 +38,20 @@ Shader::Shader(const char* vertexPath, const char* fragPath)
     glCompileShader(vShader);
 
     glGetShaderiv(vShader, GL_COMPILE_STATUS, &result);
-    if (!result)
-    {
+    if (!result) {
         glGetShaderInfoLog(vShader, 512, NULL, infoLog);
-        std::cout << "ERROR::SHADER::VERTEX::COMPILATION_FAILED\n" << infoLog << std::endl;
+        std::cout << "ERROR::SHADER::VERTEX::COMPILATION_FAILED\n"
+                  << infoLog << std::endl;
     };
 
     fShader = glCreateShader(GL_FRAGMENT_SHADER);
     glShaderSource(fShader, 1, &fShaderProg, NULL);
     glCompileShader(fShader);
     glGetShaderiv(fShader, GL_COMPILE_STATUS, &result);
-    if (!result)
-    {
+    if (!result) {
         glGetShaderInfoLog(fShader, 512, NULL, infoLog);
-        std::cout << "ERROR::SHADER::VERTEX::COMPILATION_FAILED\n" << infoLog << std::endl;
+        std::cout << "ERROR::SHADER::VERTEX::COMPILATION_FAILED\n"
+                  << infoLog << std::endl;
     };
 
     ID = glCreateProgram();
@@ -61,8 +60,7 @@ Shader::Shader(const char* vertexPath, const char* fragPath)
     glLinkProgram(ID);
 
     glGetProgramiv(ID, GL_LINK_STATUS, &result);
-    if (!result)
-    {
+    if (!result) {
         glGetProgramInfoLog(ID, 512, NULL, infoLog);
         std::cout << "ERROR LINKIG SHADER: " << infoLog << std::endl;
     }
@@ -71,19 +69,10 @@ Shader::Shader(const char* vertexPath, const char* fragPath)
 
     glDeleteShader(vShader);
     glDeleteShader(fShader);
-
 }
 
-void Shader::load() {
-    //Unused, No camera yet
-    // glm::mat4 projection = Camera::getProjection();
-    // setMat4("projection", projection);
-
-
-}
-
-
-void Shader::use() {
+void Shader::use()
+{
     glUseProgram(ID);
     load();
 }
