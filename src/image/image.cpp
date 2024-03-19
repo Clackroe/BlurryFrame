@@ -43,6 +43,9 @@ static void applyGaussianFilter(const unsigned char* inputPixels, unsigned char*
     // With seperability    O(2N*M*K) = O(N*M*K) Faster by a bit.
     std::vector<float> kernel = genGaussianKernal1D(radius, sigma);
 
+    // TODO: Consider creating a "step" value to step accross a certain amount
+    // of pixels to essentially downsample before convolving.
+
     // Apply in the horizontal axis
     for (int y = radius; y < height - radius; ++y) {
         for (int x = radius; x < width - radius; ++x) {
