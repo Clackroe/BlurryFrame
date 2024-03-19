@@ -1,3 +1,4 @@
+#include "graphics/renderer.hpp"
 #include "graphics/shader.hpp"
 #include "graphics/window.hpp"
 #include "image/image.hpp"
@@ -21,6 +22,8 @@ int main()
     Window glWindow = Window("blur");
     Shader* basicShader = new Shader("assets/shaders/basic-vert.glsl", "assets/shaders/basic-frag.glsl");
     Camera* camera = new Camera(glm::vec3(0.0, 0.0, 20.0), ORTHO);
+
+    Renderer* rend = new Renderer(camera);
 
     // get all files in content folder
     std::string path = "content/";
@@ -78,25 +81,18 @@ int main()
         }
         glm::mat4 trans_blur = glm::scale(mat4(1.0f), vec3(blur_scale, blur_scale, 1.0));
 
-        shader->use();
-
-        shader->setMat4("model", trans_blur);
-        blurImage->render();
-
         // NormalImage
-        shader->setInt("image", 0);
+        // shader->setInt("image", 0);
         float scale_factor = 1.0f;
         if ((image->w / image->h) < (glWindow.getHeight() / glWindow.getWidth())) { // image is wider than screen
             scale_factor = std::min(static_cast<float>(glWindow.getWidth()) / image->w, static_cast<float>(glWindow.getHeight()) / image->h);
         } else { // image is taller than screen
             scale_factor = std::min(static_cast<float>(glWindow.getWidth()) / image->w, static_cast<float>(glWindow.getHeight()) / image->h);
         }
-        glm::mat4 trans = glm::scale(mat4(1.0f), vec3(scale_factor, scale_factor, 1.0));
+        // glm::mat4 trans = glm::scale(mat4(1.0f), vec3(scale_factor, scale_factor, 1.0));
 
-        shader->setMat4("model", trans);
-        shader->setMat4("proj", camera->getProjection());
-        shader->setMat4("view", camera->getView());
-        image->render();
+        rend->setShader(basicShader);
+        rend->renderImage(*image);
 
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
         glWindow.frameEnd();
@@ -111,7 +107,8 @@ int main()
     ImGui_ImplOpenGL3_Shutdown();
     ImGui_ImplGlfw_Shutdown();
     ImGui::DestroyContext();
-    delete shader;
+    // delete rend;
+    // delete camera;
     return 0;
 }
 

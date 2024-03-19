@@ -74,7 +74,7 @@ Shader::Shader(const char* vertexPath, const char* fragPath)
 void Shader::use()
 {
     glUseProgram(ID);
-    load();
+    // load();
 }
 
 void Shader::setMat4(const std::string& name, glm::mat4 value)
