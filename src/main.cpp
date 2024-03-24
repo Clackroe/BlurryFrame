@@ -90,9 +90,8 @@ int main()
             scale_factor = std::min(static_cast<float>(glWindow.getWidth()) / image->w, static_cast<float>(glWindow.getHeight()) / image->h);
         }
         // glm::mat4 trans = glm::scale(mat4(1.0f), vec3(scale_factor, scale_factor, 1.0));
-
         rend->setShader(basicShader);
-        rend->renderImage(*image);
+        rend->renderImage(*blurImage);
 
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
         glWindow.frameEnd();
@@ -118,6 +117,6 @@ void renderImage(int shuffledIndecies[])
     image = new Image(files[shuffledIndecies[currentImageIndex]].c_str());
     blurImage = new Image(files[shuffledIndecies[currentImageIndex]].c_str());
     image->loadTexture(0);
-    blurImage->blur(15, 5.0);
+    blurImage->blur(15, 30.0);
     blurImage->loadTexture(1);
 }

@@ -35,6 +35,63 @@ static std::vector<float> genGaussianKernal1D(int radius, float sigma)
     return kernel;
 }
 
+static void applyGaussianFilterStep(const unsigned char* inputPixels, unsigned char* outputPixels,
+    int width, int height, int channels, int radius, float sigma, int step)
+{
+    // Generate the 1D Gaussian kernel
+    std::vector<float> kernel = genGaussianKernal1D(radius, sigma);
+
+    // Calculate the dimensions of the output image
+    int outputWidth = (width - 2 * radius) / step;
+    int outputHeight = (height - 2 * radius) / step;
+
+    // Apply in both horizontal and vertical directions
+    for (int y = radius; y < height - radius; y += step) {
+        for (int x = radius; x < width - radius; x += step) {
+            float sumR = 0.0f, sumG = 0.0f, sumB = 0.0f, sumWeights = 0.0f;
+
+            // Apply the 1D Gaussian kernel in the horizontal direction
+            for (int kx = -radius; kx <= radius; kx++) {
+                int kPIndex = (y * width + (x + kx)) * channels;
+                int kIndex = kx + radius;
+                sumR += inputPixels[kPIndex + 0] * kernel[kIndex];
+                sumG += inputPixels[kPIndex + 1] * kernel[kIndex];
+                sumB += inputPixels[kPIndex + 2] * kernel[kIndex];
+                sumWeights += kernel[kIndex];
+            }
+
+            // Normalize and clamp the output
+            int pixelIndex = ((y - radius) / step * outputWidth + (x - radius) / step) * channels;
+            outputPixels[pixelIndex + 0] = glm::clamp((sumR / sumWeights), 0.0f, 255.0f);
+            outputPixels[pixelIndex + 1] = glm::clamp((sumG / sumWeights), 0.0f, 255.0f);
+            outputPixels[pixelIndex + 2] = glm::clamp((sumB / sumWeights), 0.0f, 255.0f);
+        }
+    }
+
+    // Apply in the vertical direction
+    for (int y = radius; y < outputHeight - radius; y += step) {
+        for (int x = radius; x < outputWidth - radius; x += step) {
+            float sumR = 0.0f, sumG = 0.0f, sumB = 0.0f, sumWeights = 0.0f;
+
+            // Apply the 1D Gaussian kernel in the vertical direction
+            for (int ky = -radius; ky <= radius; ky++) {
+                int kPIndex = ((y + ky) * outputWidth + x) * channels;
+                int kIndex = ky + radius;
+                sumR += outputPixels[kPIndex + 0] * kernel[kIndex];
+                sumG += outputPixels[kPIndex + 1] * kernel[kIndex];
+                sumB += outputPixels[kPIndex + 2] * kernel[kIndex];
+                sumWeights += kernel[kIndex];
+            }
+
+            // Normalize and clamp the output
+            int pixelIndex = (y / step * outputWidth + x) * channels;
+            outputPixels[pixelIndex + 0] = glm::clamp((sumR / sumWeights), 0.0f, 255.0f);
+            outputPixels[pixelIndex + 1] = glm::clamp((sumG / sumWeights), 0.0f, 255.0f);
+            outputPixels[pixelIndex + 2] = glm::clamp((sumB / sumWeights), 0.0f, 255.0f);
+        }
+    }
+}
+
 static void applyGaussianFilter(const unsigned char* inputPixels, unsigned char* outputPixels,
     int width, int height, int channels, int radius, float sigma)
 {
@@ -47,8 +104,8 @@ static void applyGaussianFilter(const unsigned char* inputPixels, unsigned char*
     // of pixels to essentially downsample before convolving.
 
     // Apply in the horizontal axis
-    for (int y = radius; y < height - radius; ++y) {
-        for (int x = radius; x < width - radius; ++x) {
+    for (int y = radius; y < height - radius; y += 1) {
+        for (int x = radius; x < width - radius; x += 1) {
             int pixelIndex = (y * width * 3) + x * 3;
             float sumR = 0.0f;
             float sumG = 0.0f;
@@ -74,8 +131,8 @@ static void applyGaussianFilter(const unsigned char* inputPixels, unsigned char*
     }
 
     // Apply kernel in the vertical.
-    for (int y = radius; y < height - radius; ++y) {
-        for (int x = radius; x < width - radius; ++x) {
+    for (int y = radius; y < height - radius; y += 1) {
+        for (int x = radius; x < width - radius; x += 1) {
             int pixelIndex = (y * width * 3) + x * 3;
             float sumR = 0.0f;
             float sumG = 0.0f;
@@ -109,6 +166,8 @@ void Image::blur(int rad, float sigma)
     w -= rad * 2;
     h -= rad * 2;
     Loader::freePixels(pixels);
+    // w = (h - 2 * rad) / 2;
+    // h = (h - 2 * rad) / 2;
     pixels = outputPixels;
 }
 
@@ -136,24 +195,8 @@ void Image::loadTexture(int textureSlot)
 
 void Image::generateVertex()
 {
-
-    // float imageAspectRatio = static_cast<float>(w) / static_cast<float>(h);
-    // float screenAspectRatio = static_cast<float>(
-    //         Window::getHeight()) / static_cast<float>(Window::getHeight());
-
-    float scaleFactor = 1.0f;
-    // if (h > w) {
-    //     scaleFactor = static_cast<float>(Window::getHeight()) / static_cast<float>(h);
-    // } else {
-    //     scaleFactor = static_cast<float>(Window::getWidth()) / static_cast<float>(w);
-    // }
-
-    // Adjust vertex positions to maintain aspect ratio
-    float scaledWidth = static_cast<float>(w) * scaleFactor;
-    float scaledHeight = static_cast<float>(h) * scaleFactor;
-
-    float halfWidth = scaledWidth / 2.0f;
-    float halfHeight = scaledHeight / 2.0f;
+    float halfWidth = w / 2.0f;
+    float halfHeight = h / 2.0f;
 
     float vertexPos[] = {
         halfWidth, halfHeight, 0.0f, // top right
