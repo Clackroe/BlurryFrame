@@ -15,7 +15,7 @@ void Renderer::renderImage(Image& image)
     shader->setMat4("view", camera->getView());
 
     shader->setInt("image", image.textureSlot);
-    shader->setMat4("model", glm::scale(mat4(1.0f), vec3(0.5f, 0.5f, 1.0)));
+    shader->setMat4("model", image.getModelMatrix());
 
     glActiveTexture(GL_TEXTURE0 + image.textureSlot);
     glBindTexture(GL_TEXTURE_2D, image.texID);

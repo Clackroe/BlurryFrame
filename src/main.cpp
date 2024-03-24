@@ -75,32 +75,34 @@ int main()
         // BlureImage
         float blur_scale = 1.0f;
         if (glWindow.getWidth() / blurImage->w < glWindow.getHeight() / blurImage->h) {
-            blur_scale = (float)glWindow.getHeight() / (float)blurImage->h;
+            blur_scale = (float)glWindow.getHeight() / blurImage->h;
         } else {
-            blur_scale = (float)glWindow.getWidth() / (float)blurImage->w;
+            blur_scale = (float)glWindow.getWidth() / blurImage->w;
         }
-        glm::mat4 trans_blur = glm::scale(mat4(1.0f), vec3(blur_scale, blur_scale, 1.0));
+        blurImage->transform.scale = glm::vec3(blur_scale, blur_scale, 1.0f);
 
         // NormalImage
-        // shader->setInt("image", 0);
         float scale_factor = 1.0f;
         if ((image->w / image->h) < (glWindow.getHeight() / glWindow.getWidth())) { // image is wider than screen
             scale_factor = std::min(static_cast<float>(glWindow.getWidth()) / image->w, static_cast<float>(glWindow.getHeight()) / image->h);
         } else { // image is taller than screen
             scale_factor = std::min(static_cast<float>(glWindow.getWidth()) / image->w, static_cast<float>(glWindow.getHeight()) / image->h);
         }
-        // glm::mat4 trans = glm::scale(mat4(1.0f), vec3(scale_factor, scale_factor, 1.0));
+
+        image->transform.scale = glm::vec3(scale_factor, scale_factor, 1.0f);
+
         rend->setShader(basicShader);
         rend->renderImage(*blurImage);
+        rend->renderImage(*image);
 
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
         glWindow.frameEnd();
 
-        // if (counterToKeepTime == 18000) {
-        //     counterToKeepTime = 0;
-        //     renderImage(shuffledIndecies);
-        // }
-        // counterToKeepTime++;
+        if (counterToKeepTime == 2000) {
+            counterToKeepTime = 0;
+            renderImage(shuffledIndecies);
+        }
+        counterToKeepTime++;
     }
 
     ImGui_ImplOpenGL3_Shutdown();
@@ -113,10 +115,10 @@ int main()
 
 void renderImage(int shuffledIndecies[])
 {
-    // currentImageIndex++;
+    currentImageIndex++;
     image = new Image(files[shuffledIndecies[currentImageIndex]].c_str());
     blurImage = new Image(files[shuffledIndecies[currentImageIndex]].c_str());
     image->loadTexture(0);
-    blurImage->blur(15, 30.0);
+    blurImage->blur(20.0);
     blurImage->loadTexture(1);
 }
