@@ -3,12 +3,12 @@
 #define WINDOW_H
 
 #include <glad/glad.h>
+
 #include <GLFW/glfw3.h>
 #include <iostream>
 
 class Window {
 public:
-
     Window(const char* title);
     ~Window();
 
@@ -28,7 +28,5 @@ private:
     void initOpenGL();
     void processInput();
     void initCallbacks();
-
-
 };
 #endif

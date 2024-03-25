@@ -127,7 +127,6 @@ static void applyGaussianFilter(const unsigned char* inputPixels, unsigned char*
 
 void Image::blur(float sigma)
 {
-    std::cout << "Path: " << path << std::endl;
     int nW = 720;
     int nH = 1280;
     // Higher Quality, Less Performance
@@ -138,7 +137,6 @@ void Image::blur(float sigma)
     h = nH;
 
     int rad = std::ceil(2 * sigma);
-
     unsigned char* nPix = new unsigned char[(w - rad * 2) * (h - rad * 2) * 3];
     applyGaussianFilter(outputPixels, nPix, w, h, chan, rad, sigma);
     w -= (rad * 2);

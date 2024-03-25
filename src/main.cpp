@@ -3,9 +3,8 @@
 #include "graphics/window.hpp"
 #include "image/image.hpp"
 #include <algorithm>
-#include <backends/imgui_impl_glfw.h>
-#include <backends/imgui_impl_opengl3.h>
 #include <filesystem>
+#include <graphics/blurgui.hpp>
 #include <graphics/camera.hpp>
 #include <unistd.h>
 #include <vector>
@@ -23,6 +22,7 @@ int main()
     Shader* basicShader = new Shader("assets/shaders/basic-vert.glsl", "assets/shaders/basic-frag.glsl");
     Camera* camera = new Camera(glm::vec3(0.0, 0.0, 20.0), ORTHO);
 
+    BlurGui* gui = new BlurGui(&glWindow);
     Renderer* rend = new Renderer(camera);
 
     // get all files in content folder
@@ -33,11 +33,6 @@ int main()
             files.push_back(entry.path().string());
         }
     }
-
-    ImGui::CreateContext();
-    ImGui_ImplGlfw_InitForOpenGL(glWindow.window, true);
-    ImGui_ImplOpenGL3_Init("#version 330");
-    ImGui::StyleColorsDark();
 
     // render first image
     currentImageIndex = 0;
@@ -57,20 +52,15 @@ int main()
     renderImage(shuffledIndecies);
 
     int counterToKeepTime = 0;
+    int angle;
     while (!glfwWindowShouldClose(glWindow.window)) {
         glWindow.frameStart();
         glWindow.Update();
-
-        ImGui_ImplOpenGL3_NewFrame();
-        ImGui_ImplGlfw_NewFrame();
-        ImGui::NewFrame();
+        gui->frameStart();
 
         ImGui::Begin("Blur");
-        ImGui::Text("Blurryyyy"); //****I DONT LIKE THIS IT UGLY!!!!!!*****
         ImGui::Text("FPS: %f", ImGui::GetIO().Framerate);
         ImGui::End();
-
-        ImGui::Render();
 
         // BlureImage
         float blur_scale = 1.0f;
@@ -95,7 +85,7 @@ int main()
         rend->renderImage(*blurImage);
         rend->renderImage(*image);
 
-        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+        gui->frameEnd();
         glWindow.frameEnd();
 
         if (counterToKeepTime == 2000) {
@@ -103,13 +93,13 @@ int main()
             renderImage(shuffledIndecies);
         }
         counterToKeepTime++;
+        angle++;
     }
 
-    ImGui_ImplOpenGL3_Shutdown();
-    ImGui_ImplGlfw_Shutdown();
-    ImGui::DestroyContext();
-    // delete rend;
-    // delete camera;
+    delete rend;
+    delete camera;
+    delete basicShader;
+    delete gui;
     return 0;
 }
 

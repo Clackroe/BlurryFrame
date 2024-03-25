@@ -37,25 +37,9 @@ public:
 
     unsigned int VBO, VAO, EBO;
 
-    void position(glm::vec3 pos)
-    {
-        transform.position = pos;
-        modelChanged = true;
-    };
-    void rotation(glm::vec3 rot)
-    {
-        transform.rotation = rot;
-        modelChanged = true;
-    };
-    void scale(glm::vec3 sc)
-    {
-        transform.scale = sc;
-        modelChanged = true;
-    };
-
     glm::mat4 getModelMatrix()
     {
-        if (modelChanged) {
+        if (modelChanged()) {
 
             glm::mat4 mModel = glm::mat4(1.0f);
             mModel = glm::rotate(mModel, glm::radians(transform.rotation.x), glm::vec3(1.0f, 0.0f, 0.0f));
@@ -67,7 +51,7 @@ public:
             mModel = glm::translate(mModel, transform.position);
 
             model = mModel;
-            modelChanged = false;
+            prevTransform = transform;
             return mModel;
         } else {
             return model;
@@ -78,7 +62,12 @@ private:
     const char* path;
     void generateVertex();
     glm::mat4 model;
-    bool modelChanged = true;
+
+    Transform prevTransform;
+    bool modelChanged()
+    {
+        return (prevTransform.position != transform.position || prevTransform.scale != transform.scale || prevTransform.rotation != transform.rotation);
+    };
 };
 
 #endif
