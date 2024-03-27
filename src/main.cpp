@@ -29,7 +29,7 @@ int main()
     std::string path = "content/";
     // get all files that are images
     for (const auto& entry : std::filesystem::directory_iterator(path)) {
-        if (entry.path().extension() == ".jpg" || entry.path().extension() == ".png" || entry.path().extension() == ".jpeg" || entry.path().extension() == ".JPG") {
+        if (entry.path().extension() == ".mov" || entry.path().extension() == ".jpg" || entry.path().extension() == ".png" || entry.path().extension() == ".jpeg" || entry.path().extension() == ".JPG") {
             files.push_back(entry.path().string());
         }
     }
@@ -116,9 +116,15 @@ int main()
 void renderImage(int shuffledIndecies[])
 {
     currentImageIndex++;
-    image = new Image(files[shuffledIndecies[currentImageIndex]].c_str());
-    blurImage = new Image(files[shuffledIndecies[currentImageIndex]].c_str());
-    image->loadTexture(0);
-    blurImage->blur(20.0);
-    blurImage->loadTexture(1);
+    // if file is .mov
+    if (files[shuffledIndecies[currentImageIndex]].find(".mov") != std::string::npos) {
+        // do nothing
+        std::cout << "MOVIE" << std::endl;
+    } else {
+        image = new Image(files[shuffledIndecies[currentImageIndex]].c_str());
+        blurImage = new Image(files[shuffledIndecies[currentImageIndex]].c_str());
+        image->loadTexture(0);
+        blurImage->blur(20.0);
+        blurImage->loadTexture(1);
+    }
 }
