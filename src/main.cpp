@@ -2,18 +2,50 @@
 #include "graphics/shader.hpp"
 #include "graphics/window.hpp"
 #include "image/image.hpp"
+#include "imgui.h"
 #include <algorithm>
+#include <cstdio>
 #include <filesystem>
 #include <graphics/blurgui.hpp>
 #include <graphics/camera.hpp>
+#include <management/slide_manager.hpp>
 #include <unistd.h>
 #include <vector>
+//
+size_t totalAllocatedMemory = 0;
+size_t totalFreedMemory = 0;
+float cpuTime = 0;
 
+// void* operator new(size_t size)
+// {
+//     totalAllocatedMemory += size;
+//     return malloc(size);
+// }
+//
+// void operator delete(void* memory, size_t size)
+// {
+//     totalFreedMemory += size;
+//     free(memory);
+// }
+//
 void renderImage(int shuffledIndecies[]);
 Image* image;
 Image* blurImage;
 int currentImageIndex;
 std::vector<std::string> files;
+
+bool loadQueueGetter(void* data, int index, const char** output)
+{
+    QueueItem* items = (QueueItem*)data;
+    QueueItem& curr_item = items[index];
+
+    char buffer[50];
+
+    std::sprintf(buffer, "Index: %i Seen: %d ", curr_item.index, curr_item.seen);
+    *output = strdup(buffer);
+
+    return true;
+};
 
 int main()
 {
@@ -24,6 +56,8 @@ int main()
 
     BlurGui* gui = new BlurGui(&glWindow);
     Renderer* rend = new Renderer(camera);
+
+    SlideManager* sMananger = new SlideManager(10, 5);
 
     // get all files in content folder
     std::string path = "content/";
@@ -50,16 +84,38 @@ int main()
     }
 
     renderImage(shuffledIndecies);
-
+    ImGuiIO& io = ImGui::GetIO();
+    sMananger->run();
+    static int currentQueueItem;
     int counterToKeepTime = 0;
     int angle;
+    float t = 0;
     while (!glfwWindowShouldClose(glWindow.window)) {
         glWindow.frameStart();
         glWindow.Update();
         gui->frameStart();
+        t = glfwGetTime();
 
-        ImGui::Begin("Blur");
-        ImGui::Text("FPS: %f", ImGui::GetIO().Framerate);
+        ImGui::Begin("DEBUG");
+        ImGui::Text("FPS: %f   CPU Time: %f", ImGui::GetIO().Framerate, cpuTime);
+        ImGui::SeparatorText("SlideManager Debug");
+        ImGui::Text("Timer Length %i", sMananger->timerLength);
+        ImGui::Text("Elapsed: %f", sMananger->timer.getElapsedTime());
+        ImGui::Text("Timer Count: %d", sMananger->timeCount);
+        ImGui::NewLine();
+        ImGui::Text("BuffSize: %i: ", sMananger->buffSize);
+        ImGui::Text("Current Image: %i: ", sMananger->currentImageIndex);
+
+        ImGui::ListBox(
+            "Load Queue",
+            &currentQueueItem,
+            loadQueueGetter,
+            sMananger->loadQueue.data(),
+            sMananger->loadQueue.size());
+
+        // ImGui::SeparatorText("Memory");
+        // ImGui::Text("Total Allocated Memory: %f MB", (float)totalAllocatedMemory / (1000000.0f));
+        // ImGui::Text("Total Freed Memory: %f MB", (float)totalFreedMemory / (1000000.0f));
         ImGui::End();
 
         // BlureImage
@@ -85,6 +141,7 @@ int main()
         rend->renderImage(*blurImage);
         rend->renderImage(*image);
 
+        cpuTime = glfwGetTime() - t;
         gui->frameEnd();
         glWindow.frameEnd();
 
@@ -92,14 +149,18 @@ int main()
             counterToKeepTime = 0;
             renderImage(shuffledIndecies);
         }
-        counterToKeepTime++;
+        // counterToKeepTime++;
         angle++;
     }
 
+    delete image;
     delete rend;
     delete camera;
     delete basicShader;
     delete gui;
+    delete sMananger;
+
+    std::cout << "Final Mem Usage: " << totalAllocatedMemory - totalFreedMemory << std::endl;
     return 0;
 }
 

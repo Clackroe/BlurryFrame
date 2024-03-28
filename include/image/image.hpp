@@ -1,7 +1,6 @@
 #ifndef IMAGE_H
 #define IMAGE_H
 #include "glm/ext/matrix_transform.hpp"
-#include <glad/glad.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <image/image_loader.h>
@@ -18,6 +17,7 @@ struct Transform {
 class Image {
 
 public:
+    Image();
     Image(const char* path);
     ~Image();
     int w, h, chan;

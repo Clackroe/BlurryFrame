@@ -6,6 +6,9 @@ int Window::SCR_HEIGHT = 0;
 // Static to avoid use outside of this file
 static void errorCallback(int error, const char* description)
 {
+    if (error == 65537) {
+        return;
+    }
     std::cerr << "GLFW Error " << error << ": " << description << std::endl;
 }
 
