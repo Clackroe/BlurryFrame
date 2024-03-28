@@ -41,7 +41,7 @@ bool loadQueueGetter(void* data, int index, const char** output)
 
     char buffer[50];
 
-    std::sprintf(buffer, "Index: %i Seen: %d ", curr_item.index, curr_item.seen);
+    std::sprintf(buffer, "%i: Image: %i Seen: %d ", index, curr_item.index, curr_item.seen);
     *output = strdup(buffer);
 
     return true;
@@ -105,9 +105,9 @@ int main()
         ImGui::NewLine();
         ImGui::Text("BuffSize: %i: ", sMananger->buffSize);
         ImGui::Text("Current Image: %i: ", sMananger->currentImageIndex);
-
+        ImGui::Text("Load Queue");
         ImGui::ListBox(
-            "Load Queue",
+            "##Load Queue",
             &currentQueueItem,
             loadQueueGetter,
             sMananger->loadQueue.data(),
