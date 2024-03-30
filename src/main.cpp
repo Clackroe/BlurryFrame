@@ -41,7 +41,11 @@ bool loadQueueGetter(void* data, int index, const char** output)
 
     char buffer[50];
 
-    std::sprintf(buffer, "%i: Image: %i Seen: %d ", index, curr_item.index, curr_item.seen);
+    char loaded = curr_item.loaded ? 'L' : 'U';
+    std::string curr = curr_item.viewing ? "---" : " ";
+
+    std::sprintf(buffer, "Image: %i Seen: %d %c %s ", index, curr_item.seen, loaded, curr.c_str());
+
     *output = strdup(buffer);
 
     return true;
@@ -57,9 +61,10 @@ int main()
     BlurGui* gui = new BlurGui(&glWindow);
     Renderer* rend = new Renderer(camera);
 
-    SlideManager* sMananger = new SlideManager(10, 5);
+    SlideManager* sMananger = new SlideManager(10, 2);
 
     // get all files in content folder
+    //
     std::string path = "content/";
     // get all files that are images
     for (const auto& entry : std::filesystem::directory_iterator(path)) {
@@ -110,8 +115,8 @@ int main()
             "##Load Queue",
             &currentQueueItem,
             loadQueueGetter,
-            sMananger->loadQueue.data(),
-            sMananger->loadQueue.size());
+            sMananger->loadQueue,
+            sMananger->buffSize);
 
         // ImGui::SeparatorText("Memory");
         // ImGui::Text("Total Allocated Memory: %f MB", (float)totalAllocatedMemory / (1000000.0f));
@@ -167,8 +172,8 @@ int main()
 void renderImage(int shuffledIndecies[])
 {
     currentImageIndex++;
-    image = new Image(files[shuffledIndecies[currentImageIndex]].c_str());
-    blurImage = new Image(files[shuffledIndecies[currentImageIndex]].c_str());
+    image = new Image(files[shuffledIndecies[currentImageIndex]]);
+    blurImage = new Image(files[shuffledIndecies[currentImageIndex]]);
     image->loadTexture(0);
     blurImage->blur(20.0);
     blurImage->loadTexture(1);

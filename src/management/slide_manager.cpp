@@ -1,7 +1,8 @@
-#include <cstdio>
-#include <exception>
+#include "image/image.hpp"
 #include <management/slide_manager.hpp>
 #include <unistd.h>
+
+int seenBuffer = 4;
 
 SlideManager::SlideManager(int size, int timeToSwitch)
 {
@@ -10,29 +11,48 @@ SlideManager::SlideManager(int size, int timeToSwitch)
 
     shouldClose = false;
     buffSize = size;
-    images = new Image[size];
+    loadQueue = new QueueItem[size];
     imageToRender = nullptr;
     currentImageIndex = 0;
-    loadQueue = std::vector<QueueItem>(buffSize);
+    loadQueue[currentImageIndex].viewing = true;
 }
 
 SlideManager::~SlideManager()
 {
     delete[] images;
 }
-
-void SlideManager::loadImage()
+bool SlideManager::shouldLoadImage(int index)
 {
+    return ((currentImageIndex - index + buffSize) % buffSize > seenBuffer
+        && !loadQueue[index].viewing);
 }
 
-void SlideManager::switchImage()
+void SlideManager::loadImage() // Called every tick
 {
+    for (int i = 0; i < buffSize; i++) {
+        if (shouldLoadImage(i)) {
+            // Load Image i
+            // if (loadQueue[i].image == nullptr) {
+            //     std::cout << "Constructing new image" << std::endl;
+            //     loadQueue[i].image = new Image();
+            // }
+
+            loadQueue[i].image->deconstruct();
+
+            loadQueue[i].seen = false;
+            loadQueue[i].loaded = true;
+        }
+    }
+}
+
+void SlideManager::switchImage() // Called when timer is elapsed
+{
+    loadQueue[currentImageIndex].seen = true;
+    loadQueue[currentImageIndex].viewing = false;
+
     imageToRender = &images[currentImageIndex];
     currentImageIndex = (currentImageIndex + 1) % buffSize;
-}
-
-void SlideManager::updateQueue()
-{
+    loadQueue[currentImageIndex].viewing = true;
 }
 
 void SlideManager::run()
@@ -41,7 +61,7 @@ void SlideManager::run()
         return;
     }
     timer.setTimerSeconds(timerLength);
-    std::thread main(&SlideManager::loop, this);
+    main = std::thread(&SlideManager::loop, this);
     main.detach();
 }
 

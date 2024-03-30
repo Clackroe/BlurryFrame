@@ -4,11 +4,12 @@
 #include <image/image.hpp>
 #include <thread>
 #include <time.hpp>
-#include <vector>
 
 struct QueueItem {
     bool seen = false;
-    int index = 0;
+    bool viewing = false;
+    bool loaded = false;
+    Image* image = new Image();
 };
 
 class SlideManager {
@@ -22,7 +23,7 @@ public:
 
     void loadImage();
     void switchImage();
-    void updateQueue();
+    bool shouldLoadImage(int index);
 
     int buffSize;
     bool shouldClose;
@@ -35,7 +36,9 @@ public:
     Image* images;
     Image* imageToRender;
 
-    std::vector<QueueItem> loadQueue;
+    std::thread main;
+
+    QueueItem* loadQueue;
 
     // Debug Vars
     int timeCount = 0;

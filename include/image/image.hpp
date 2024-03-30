@@ -4,6 +4,7 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <image/image_loader.h>
+#include <string>
 
 struct Vertex {
     glm::vec3 pos;
@@ -18,7 +19,7 @@ class Image {
 
 public:
     Image();
-    Image(const char* path);
+    Image(std::string path);
     ~Image();
     int w, h, chan;
     unsigned char* pixels;
@@ -32,6 +33,9 @@ public:
     void frameStart();
     void render();
     void frameEnd();
+
+    void deconstruct();
+    void reconstruct(char* path);
 
     void blur(float sigma);
 
@@ -59,7 +63,7 @@ public:
     };
 
 private:
-    const char* path;
+    std::string path;
     void generateVertex();
     glm::mat4 model;
 

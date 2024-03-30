@@ -9,13 +9,33 @@
 
 Image::Image()
 {
+    path = "--";
+    transform.position = glm::vec3(0.0f, 0.0f, 0.0f);
+    transform.scale = glm::vec3(1.0f, 1.0f, 1.0f);
+    transform.rotation = glm::vec3(0.0f, 0.0f, 0.0f);
 
+    std::cout << "Image Default Constructor" << std::endl;
+}
+
+Image::Image(std::string path)
+{
+    Image::path = path;
+    pixels = Loader::loadImage(path.data(), &w, &h, &chan);
     transform.position = glm::vec3(0.0f, 0.0f, 0.0f);
     transform.scale = glm::vec3(1.0f, 1.0f, 1.0f);
     transform.rotation = glm::vec3(0.0f, 0.0f, 0.0f);
 }
+Image::~Image()
+{
+    if (pixels != nullptr) {
+        Loader::freePixels(pixels);
+    }
+    glDeleteVertexArrays(1, &VAO);
+    glDeleteBuffers(1, &VBO);
+    glDeleteBuffers(1, &EBO);
+}
 
-Image::Image(const char* path)
+void Image::reconstruct(char* path)
 {
     Image::path = path;
     pixels = Loader::loadImage(path, &w, &h, &chan);
@@ -23,11 +43,33 @@ Image::Image(const char* path)
     transform.scale = glm::vec3(1.0f, 1.0f, 1.0f);
     transform.rotation = glm::vec3(0.0f, 0.0f, 0.0f);
 }
-Image::~Image()
+
+void Image::deconstruct()
 {
-    glDeleteVertexArrays(1, &VAO);
-    glDeleteBuffers(1, &VBO);
-    glDeleteBuffers(1, &EBO);
+
+    // std::cout << "Destruct" << std::endl;
+    path = "---";
+
+    // glDeleteVertexArrays(1, &VAO);
+    // glDeleteBuffers(1, &VBO);
+    // glDeleteBuffers(1, &EBO);
+
+    transform.position = glm::vec3(0.0f, 0.0f, 0.0f);
+    transform.scale = glm::vec3(1.0f, 1.0f, 1.0f);
+    transform.rotation = glm::vec3(0.0f, 0.0f, 0.0f);
+
+    model = glm::mat4(1.0);
+
+    if (pixels != nullptr) {
+        Loader::freePixels(pixels);
+        std::cout << "After Free Pixels" << std::endl;
+    }
+
+    w = 0;
+    h = 0;
+    chan = 0;
+    texID = -1;
+    textureSlot = -1;
 }
 
 // 1D Gaussian to take advantage of seperable filters.
