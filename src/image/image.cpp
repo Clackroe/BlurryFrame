@@ -9,16 +9,21 @@
 
 Image::Image()
 {
+    // printf("Default Constructor\n");
     path = "--";
+    VBO = 0;
+    VAO = 0;
+    EBO = 0;
+
     transform.position = glm::vec3(0.0f, 0.0f, 0.0f);
     transform.scale = glm::vec3(1.0f, 1.0f, 1.0f);
     transform.rotation = glm::vec3(0.0f, 0.0f, 0.0f);
-
-    std::cout << "Image Default Constructor" << std::endl;
+    pixels = nullptr;
 }
 
 Image::Image(std::string path)
 {
+    // printf("Constructor\n");
     Image::path = path;
     pixels = Loader::loadImage(path.data(), &w, &h, &chan);
     transform.position = glm::vec3(0.0f, 0.0f, 0.0f);
@@ -27,12 +32,19 @@ Image::Image(std::string path)
 }
 Image::~Image()
 {
+    // printf("destroying\n");
     if (pixels != nullptr) {
         Loader::freePixels(pixels);
+        pixels = nullptr;
     }
-    glDeleteVertexArrays(1, &VAO);
-    glDeleteBuffers(1, &VBO);
-    glDeleteBuffers(1, &EBO);
+    if (VAO != 0)
+        glDeleteVertexArrays(1, &VAO);
+    if (VBO != 0)
+        glDeleteBuffers(1, &VBO);
+    if (EBO != 0)
+        glDeleteBuffers(1, &EBO);
+
+    // printf("destroyed\n");
 }
 
 void Image::reconstruct(char* path)
@@ -207,6 +219,7 @@ void Image::loadTexture(int textureSlot)
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, w, h, 0, GL_RGB, GL_UNSIGNED_BYTE, pixels);
     glGenerateMipmap(GL_TEXTURE_2D);
     Loader::freePixels(pixels);
+    pixels = nullptr;
 
     glActiveTexture(GL_TEXTURE0 + textureSlot);
     glBindTexture(GL_TEXTURE_2D, texID);

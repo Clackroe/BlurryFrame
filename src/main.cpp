@@ -9,6 +9,7 @@
 #include <graphics/blurgui.hpp>
 #include <graphics/camera.hpp>
 #include <management/slide_manager.hpp>
+#include <string>
 #include <unistd.h>
 #include <vector>
 //
@@ -28,7 +29,7 @@ float cpuTime = 0;
 //     free(memory);
 // }
 //
-void renderImage(int shuffledIndecies[]);
+void renderImage();
 Image* image;
 Image* blurImage;
 int currentImageIndex;
@@ -61,7 +62,7 @@ int main()
     BlurGui* gui = new BlurGui(&glWindow);
     Renderer* rend = new Renderer(camera);
 
-    SlideManager* sMananger = new SlideManager(10, 2);
+    SlideManager* sMananger = new SlideManager(10, 5);
 
     // get all files in content folder
     //
@@ -88,7 +89,7 @@ int main()
         shuffledIndecies[randomIndex] = temp;
     }
 
-    renderImage(shuffledIndecies);
+    renderImage();
     ImGuiIO& io = ImGui::GetIO();
     sMananger->run();
     static int currentQueueItem;
@@ -143,8 +144,15 @@ int main()
         image->transform.scale = glm::vec3(scale_factor, scale_factor, 1.0f);
 
         rend->setShader(basicShader);
-        rend->renderImage(*blurImage);
-        rend->renderImage(*image);
+
+        if (sMananger->imageToRender != nullptr) {
+            if (sMananger->imageToRender->pixels != nullptr) {
+                sMananger->imageToRender->loadTexture(0);
+            }
+            rend->renderImage(*sMananger->imageToRender);
+        }
+        // rend->renderImage(*blurImage);
+        // rend->renderImage(*image);
 
         cpuTime = glfwGetTime() - t;
         gui->frameEnd();
@@ -152,7 +160,7 @@ int main()
 
         if (counterToKeepTime == 2000) {
             counterToKeepTime = 0;
-            renderImage(shuffledIndecies);
+            renderImage();
         }
         // counterToKeepTime++;
         angle++;
@@ -169,12 +177,13 @@ int main()
     return 0;
 }
 
-void renderImage(int shuffledIndecies[])
+void renderImage()
 {
-    currentImageIndex++;
-    image = new Image(files[shuffledIndecies[currentImageIndex]]);
-    blurImage = new Image(files[shuffledIndecies[currentImageIndex]]);
-    image->loadTexture(0);
-    blurImage->blur(20.0);
-    blurImage->loadTexture(1);
+    // printf("Image: %s ", files[shuffledIndecies[currentImageIndex]].data());
+    // currentImageIndex++;
+    image = new Image(files[0]);
+    blurImage = new Image(files[0]);
+    // image->loadTexture(0);
+    // blurImage->blur(20.0);
+    // blurImage->loadTexture(1);
 }

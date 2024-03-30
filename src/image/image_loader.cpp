@@ -19,11 +19,12 @@ unsigned char* loadImage(const char* path, int* width, int* height, int* channel
 
 void freePixels(unsigned char* pixels)
 {
-    if (pixels) {
+    if (pixels != nullptr && pixels) {
         stbi_image_free(pixels);
-        std::cout << "Data Freed" << std::endl;
+        // pixels = nullptr;
+        // std::cout << "Data Freed" << std::endl;
     } else {
-        std::cerr << "No data to free." << std::endl;
+        // std::cerr << "No data to free." << std::endl;
     }
 }
 

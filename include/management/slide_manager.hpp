@@ -33,7 +33,6 @@ public:
 
     int currentImageIndex;
 
-    Image* images;
     Image* imageToRender;
 
     std::thread main;

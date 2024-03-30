@@ -75,7 +75,8 @@ void Window::Update()
     // Ensure there are no errors in OpenGL at frame time.
     GLenum err;
     while ((err = glGetError()) != GL_NO_ERROR) {
-        std::cerr << err << std::endl;
+        // TODO: Uncomment if need errors
+        // std::cerr << err << std::endl;
     }
 }
 
