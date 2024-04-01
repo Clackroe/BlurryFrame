@@ -50,6 +50,7 @@ GLAD.make
 
 /.vscode
 /content
+/videos
 /CMakeFiles
 
 Blurry.make
