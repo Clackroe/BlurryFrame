@@ -13,6 +13,9 @@ file(GLOB_RECURSE SOURCES "src/*.cpp")
 # Include directories
 include_directories(include)
 
+#FFmpeg
+add_subdirectory(libs/FFmpeg)
+
 # GLFW
 add_subdirectory(libs/glfw)
 include_directories(libs/glfw/include)
@@ -46,4 +49,4 @@ include_directories(libs/imgui)
 
 # Executable
 add_executable(Blur ${SOURCES})
-target_link_libraries(Blur glfw glad imgui)
+target_link_libraries(Blur FFmpeg glfw glad imgui)

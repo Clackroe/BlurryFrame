@@ -57,6 +57,7 @@ int main()
     renderImage(shuffledIndecies);
 
     int counterToKeepTime = 0;
+    glfwMakeContextCurrent(glWindow.window);
     while (!glfwWindowShouldClose(glWindow.window)) {
         glWindow.frameStart();
         glWindow.Update();
