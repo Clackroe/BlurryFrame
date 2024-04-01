@@ -47,11 +47,14 @@ int main()
         shuffledIndecies[i] = i;
     }
     // shuffle the indecies
-    for (int i = 0; i < sizeOfFiles; i++) {
-        int randomIndex = rand() % sizeOfFiles;
-        int temp = shuffledIndecies[i];
-        shuffledIndecies[i] = shuffledIndecies[randomIndex];
-        shuffledIndecies[randomIndex] = temp;
+    srand(time(nullptr)); // Seed the random number generator with current time
+    int j;
+    for (int i = sizeOfFiles; i != 0; i--) { 
+        j = rand() % i; 
+        // swap the indecies
+        int temp = shuffledIndecies[i - 1];
+        shuffledIndecies[i - 1] = shuffledIndecies[j];
+        shuffledIndecies[j] = temp;
     }
 
     renderImage(shuffledIndecies);
