@@ -14,3 +14,9 @@
 	path = libs/exiv2
 	url = https://github.com/Exiv2/exiv2.git
 	branch = 0.28.x
+[submodule "libs/libs/FFmpeg"]
+	path = libs/libs/FFmpeg
+	url = https://github.com/FFmpeg/FFmpeg
+[submodule "libs/FFmpeg"]
+	path = libs/FFmpeg
+	url = https://github.com/FFmpeg/FFmpeg
