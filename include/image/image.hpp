@@ -37,6 +37,9 @@ public:
     void deconstruct();
     void reconstruct(char* path);
 
+    void generateVertex();
+    void loadToGPU();
+
     void blur(float sigma);
 
     unsigned int VBO, VAO, EBO;
@@ -64,13 +67,24 @@ public:
 
 private:
     std::string path;
-    void generateVertex();
     glm::mat4 model;
-
     Transform prevTransform;
+
     bool modelChanged()
     {
         return (prevTransform.position != transform.position || prevTransform.scale != transform.scale || prevTransform.rotation != transform.rotation);
+    };
+
+    Vertex vertices[4];
+    unsigned int indices[6] = {
+        0, 1, 3, // first Triangle
+        1, 2, 3 // second Triangle
+    };
+    float textureCoords[8] = {
+        1.0f, 1.0f, // top right
+        1.0f, 0.0f, // lower right
+        0.0f, 0.0f, // lower left
+        0.0f, 1.0f // top left
     };
 };
 

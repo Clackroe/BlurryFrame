@@ -211,6 +211,7 @@ void Image::blur(float sigma)
 
 void Image::loadTexture(int textureSlot)
 {
+    // Seperate this into multiple functions
     Image::textureSlot = textureSlot;
 
     glGenTextures(1, &texID);
@@ -225,6 +226,7 @@ void Image::loadTexture(int textureSlot)
     glBindTexture(GL_TEXTURE_2D, texID);
 
     generateVertex();
+    loadToGPU();
 }
 
 void Image::generateVertex()
@@ -245,27 +247,6 @@ void Image::generateVertex()
         vertexPos[i * 3 + 1] /= Window::getHeight();
     }
 
-    unsigned int indices[] = {
-        // note that we start from 0!
-        0, 1, 3, // first Triangle
-        1, 2, 3 // second Triangle
-    };
-
-    float textureCoords[] = {
-        1.0f, 1.0f, // top right
-        1.0f, 0.0f, // lower right
-        0.0f, 0.f, // lower left
-        0.0f, 1.0f // top left
-    };
-
-    glGenVertexArrays(1, &VAO);
-    glGenBuffers(1, &VBO);
-    glGenBuffers(1, &EBO);
-
-    glBindVertexArray(VAO);
-
-    Vertex vertices[4];
-
     for (int i = 0; i < 4; ++i) {
         int texIndex = i * 2;
         int posIndex = i * 3;
@@ -277,6 +258,16 @@ void Image::generateVertex()
         vertices[i].texUV.x = textureCoords[texIndex];
         vertices[i].texUV.y = textureCoords[texIndex + 1];
     }
+}
+
+void Image::loadToGPU()
+{
+
+    glGenVertexArrays(1, &VAO);
+    glGenBuffers(1, &VBO);
+    glGenBuffers(1, &EBO);
+
+    glBindVertexArray(VAO);
 
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
