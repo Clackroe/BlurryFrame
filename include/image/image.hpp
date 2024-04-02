@@ -3,7 +3,7 @@
 #include "glm/ext/matrix_transform.hpp"
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
-#include <image/image_loader.h>
+#include <image/image_utils.hpp>
 #include <string>
 
 struct Vertex {
@@ -66,6 +66,7 @@ public:
     };
 
 private:
+    bool imageLoaded = false;
     std::string path;
     glm::mat4 model;
     Transform prevTransform;

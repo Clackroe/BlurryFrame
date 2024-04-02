@@ -1,4 +1,5 @@
 #include "image/image.hpp"
+#include <exception>
 #include <filesystem>
 #include <management/slide_manager.hpp>
 #include <unistd.h>
@@ -21,6 +22,13 @@ SlideManager::SlideManager(int size, int timeToSwitch)
     imageToRender = nullptr;
     currentImageIndex = 0;
 
+    //
+    //
+    //
+    //
+    //
+    //
+    //
     std::string path = "content/";
     // get all files that are images
     for (const auto& entry : std::filesystem::directory_iterator(path)) {
@@ -41,45 +49,66 @@ SlideManager::~SlideManager()
 }
 bool SlideManager::shouldLoadImage(int index)
 {
-    return ((currentImageIndex - index + buffSize) % buffSize > seenBuffer
-        && !loadQueue[index].viewing && !loadQueue[index].loaded);
+    return (!loadQueue[index].viewing && loadQueue[index].shouldLoad);
 }
 
 void SlideManager::loadImage() // Called every tick
 {
     for (int i = 0; i < buffSize; i++) {
         if (shouldLoadImage(i)) {
-            // Load Image i
 
-            delete loadQueue[i].image;
             std::cout << fIndex << std::endl;
             std::cout << files[fIndex] << std::endl;
-            loadQueue[i].image = new Image(files[fIndex]);
+            loadQueue[i].image->deconstruct();
+            loadQueue[i].image->reconstruct(files[fIndex].data());
+            loadQueue[i].image->generateVertex();
+            loadQueue[i].shouldLoad = false;
             fIndex = (fIndex + 1) % files.size();
-            // Very Jank
-            // int in = (currentImageIndex - i + buffSize) % buffSize;
-            // loadQueue[currentImageIndex].image->loadTexture(0);
-
-            loadQueue[i].seen = false;
-            loadQueue[i].loaded = true;
         }
     }
 }
 
 void SlideManager::switchImage() // Called when timer is elapsed
 {
-    loadQueue[currentImageIndex].seen = true;
     loadQueue[currentImageIndex].viewing = false;
-    loadQueue[currentImageIndex].loaded = false;
-
+    loadQueue[(currentImageIndex - seenBuffer + buffSize) % buffSize].shouldLoad = true;
     imageToRender = loadQueue[currentImageIndex].image;
     currentImageIndex = (currentImageIndex + 1) % buffSize;
     loadQueue[currentImageIndex].viewing = true;
+
+    // (currentImageIndex - index + buffSize) % buffSize > seenBuffer
 
     if (imageToRender == nullptr) {
         std::cout << "Why am I null????" << std::endl;
     }
     std::cout << "Not null, heck yea...." << std::endl;
+}
+
+void SlideManager::prev()
+{
+    int cin = currentImageIndex;
+    int prevIn = (currentImageIndex - 1 + buffSize) % buffSize;
+
+    loadQueue[cin].viewing = false;
+    loadQueue[cin].shouldLoad = true;
+    loadQueue[prevIn].viewing = true;
+    loadQueue[prevIn].shouldLoad = false;
+
+    currentImageIndex = prevIn;
+    imageToRender = loadQueue[prevIn].image;
+}
+void SlideManager::next()
+{
+    int cin = currentImageIndex;
+    int prevIn = (currentImageIndex + 1 + buffSize) % buffSize;
+
+    loadQueue[cin].viewing = false;
+    loadQueue[cin].shouldLoad = true;
+    loadQueue[prevIn].viewing = true;
+    loadQueue[prevIn].shouldLoad = false;
+
+    currentImageIndex = prevIn;
+    imageToRender = loadQueue[prevIn].image;
 }
 
 void SlideManager::run()

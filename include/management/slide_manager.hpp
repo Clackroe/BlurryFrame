@@ -6,9 +6,8 @@
 #include <time.hpp>
 
 struct QueueItem {
-    bool seen = false;
     bool viewing = false;
-    bool loaded = false;
+    bool shouldLoad = true;
     Image* image = new Image();
 };
 
@@ -24,6 +23,9 @@ public:
     void loadImage();
     void switchImage();
     bool shouldLoadImage(int index);
+
+    void prev();
+    void next();
 
     int buffSize;
     bool shouldClose;
