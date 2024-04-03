@@ -8,7 +8,14 @@
 struct QueueItem {
     bool viewing = false;
     bool shouldLoad = true;
-    Image* image = new Image();
+    std::string name = "none";
+    Image image = Image();
+    Image burImage = Image();
+};
+
+struct GlCleanupItem {
+
+    unsigned int *VBO, *VAO, *EBO;
 };
 
 class SlideManager {
@@ -27,6 +34,8 @@ public:
     void prev();
     void next();
 
+    std::vector<GlCleanupItem> glCleanupBuffer = std::vector<GlCleanupItem>();
+
     int buffSize;
     bool shouldClose;
     bool running;
@@ -35,7 +44,7 @@ public:
 
     int currentImageIndex;
 
-    Image* imageToRender;
+    QueueItem* imageToRender;
 
     std::thread main;
 

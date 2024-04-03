@@ -76,7 +76,7 @@ void Window::Update()
     GLenum err;
     while ((err = glGetError()) != GL_NO_ERROR) {
         // TODO: Uncomment if need errors
-        // std::cerr << err << std::endl;
+        std::cerr << err << std::endl;
     }
 }
 

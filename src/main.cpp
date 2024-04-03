@@ -9,6 +9,7 @@
 #include <management/slide_manager.hpp>
 #include <string>
 #include <unistd.h>
+
 //
 size_t totalAllocatedMemory = 0;
 size_t totalFreedMemory = 0;
@@ -25,6 +26,11 @@ void operator delete(void* memory, size_t size)
     totalFreedMemory += size;
     free(memory);
 }
+void operator delete[](void* memory, size_t size)
+{
+    totalFreedMemory += size;
+    free(memory);
+}
 
 bool loadQueueGetter(void* data, int index, const char** output)
 {
@@ -35,9 +41,9 @@ bool loadQueueGetter(void* data, int index, const char** output)
 
     char loaded = curr_item.shouldLoad ? 'Y' : 'N';
 
-    std::string curr = curr_item.viewing ? "---" : " ";
+    std::string curr = curr_item.viewing ? "---" : curr_item.name;
 
-    std::sprintf(buffer, "Image: %i Seen: %c %s ", index, loaded, curr.c_str());
+    std::sprintf(buffer, "Image: %i %c %s ", index, loaded, curr.c_str());
     if (*output != nullptr) {
         free(output);
     }
@@ -46,6 +52,13 @@ bool loadQueueGetter(void* data, int index, const char** output)
 
     return true;
 };
+
+void glCleanup(unsigned int* VAO, unsigned int* VBO, unsigned int* EBO)
+{
+    glDeleteVertexArrays(1, VAO);
+    glDeleteBuffers(1, VBO);
+    glDeleteBuffers(1, EBO);
+}
 
 int main()
 {
@@ -67,12 +80,13 @@ int main()
         glWindow.Update();
         gui->frameStart();
         t = glfwGetTime();
-
+        // Begin Debug
         ImGui::Begin("DEBUG");
         ImGui::Text("FPS: %f   CPU Time: %f", ImGui::GetIO().Framerate, cpuTime);
         ImGui::SeparatorText("Memory");
-        ImGui::Text("Total Allocated Memory: %f MB", (float)totalAllocatedMemory / (1000000.0f));
-        ImGui::Text("Total Freed Memory: %f MB", (float)totalFreedMemory / (1000000.0f));
+        // THIS ISN'T ACCURATE
+        // ImGui::Text("Total Allocated Memory: %f MB", (float)totalAllocatedMemory / (1000000.0f));
+        // ImGui::Text("Total Freed Memory: %f MB", (float)totalFreedMemory / (1000000.0f));
         ImGui::SeparatorText("SlideManager Debug");
         ImGui::Text("Timer Length %i", sMananger->timerLength);
         ImGui::Text("Elapsed: %f", sMananger->timer.getElapsedTime());
@@ -97,28 +111,42 @@ int main()
             sMananger->buffSize);
         ImGui::End();
 
+        // End Debug
+
         // Blur Image
-        // float blur_scale = 1.0f;
-        // if (glWindow.getWidth() / blurImage->w < glWindow.getHeight() / blurImage->h) {
-        //     blur_scale = (float)glWindow.getHeight() / blurImage->h;
-        // } else {
-        //     blur_scale = (float)glWindow.getWidth() / blurImage->w;
-        // }
-        // // NormalImage
-        // float scale_factor = 1.0f;
-        // if ((image->w / image->h) < (glWindow.getHeight() / glWindow.getWidth())) { // image is wider than screen
-        //     scale_factor = std::min(static_cast<float>(glWindow.getWidth()) / image->w, static_cast<float>(glWindow.getHeight()) / image->h);
-        // } else { // image is taller than screen
-        //     scale_factor = std::min(static_cast<float>(glWindow.getWidth()) / image->w, static_cast<float>(glWindow.getHeight()) / image->h);
-        // }
 
         rend->setShader(basicShader);
         if (sMananger->imageToRender != nullptr) {
-            if (sMananger->imageToRender->pixels != nullptr) {
-                sMananger->imageToRender->loadTexture(0);
+            float blur_scale = 1.0f;
+            if (glWindow.getWidth() / sMananger->imageToRender->burImage.w < glWindow.getHeight() / sMananger->imageToRender->burImage.h) {
+                blur_scale = (float)glWindow.getHeight() / sMananger->imageToRender->burImage.h;
+            } else {
+                blur_scale = (float)glWindow.getWidth() / sMananger->imageToRender->burImage.w;
             }
-            rend->renderImage(*sMananger->imageToRender);
+            //
+            // NormalImage
+            float scale_factor = 1.0f;
+            if ((sMananger->imageToRender->image.w / sMananger->imageToRender->image.h) < (glWindow.getHeight() / glWindow.getWidth())) { // image is wider than screen
+                scale_factor = std::min(static_cast<float>(glWindow.getWidth()) / sMananger->imageToRender->image.w, static_cast<float>(glWindow.getHeight()) / sMananger->imageToRender->image.h);
+            } else { // image is taller than screen
+                scale_factor = std::min(static_cast<float>(glWindow.getWidth()) / sMananger->imageToRender->image.w, static_cast<float>(glWindow.getHeight()) / sMananger->imageToRender->image.h);
+            }
+            if (sMananger->imageToRender->image.pixels != nullptr) {
+                sMananger->imageToRender->image.loadTexture(0);
+            }
+            // std::cout << scale_factor << std::endl;
+            if (sMananger->imageToRender->burImage.pixels != nullptr) {
+                sMananger->imageToRender->burImage.loadTexture(1);
+            }
+            sMananger->imageToRender->burImage.transform.scale = { blur_scale, blur_scale, 1.0f };
+            sMananger->imageToRender->image.transform.scale = { scale_factor, scale_factor, 1.0f };
+            rend->renderImage(sMananger->imageToRender->burImage);
+            rend->renderImage(sMananger->imageToRender->image);
         }
+
+        // for (GlCleanupItem item : sMananger->glCleanupBuffer) {
+        //     glCleanup(item.VAO, item.VBO, item.EBO);
+        // }
 
         cpuTime = glfwGetTime() - t;
         gui->frameEnd();

@@ -8,7 +8,6 @@
 
 Image::Image()
 {
-    // printf("Default Constructor\n");
     path = "--";
     VBO = 0;
     VAO = 0;
@@ -22,7 +21,6 @@ Image::Image()
 
 Image::Image(std::string path)
 {
-    // printf("Constructor\n");
     Image::path = path;
     pixels = Loader::loadImage(path.data(), &w, &h, &chan);
     transform.position = glm::vec3(0.0f, 0.0f, 0.0f);
@@ -31,19 +29,16 @@ Image::Image(std::string path)
 }
 Image::~Image()
 {
-    // printf("destroying\n");
     if (pixels != nullptr) {
         Loader::freePixels(pixels);
         pixels = nullptr;
     }
-    if (VAO != 0)
+    if (VAO > 0)
         glDeleteVertexArrays(1, &VAO);
-    if (VBO != 0)
+    if (VBO > 0)
         glDeleteBuffers(1, &VBO);
-    if (EBO != 0)
+    if (EBO > 0)
         glDeleteBuffers(1, &EBO);
-
-    // printf("destroyed\n");
 }
 
 void Image::reconstruct(char* path)
@@ -63,16 +58,12 @@ void Image::deconstruct()
     }
     path = "---";
 
-    // Not sure how to do this, has to be done in main loop.
-    // glDeleteVertexArrays(1, &VAO);
-    // glDeleteBuffers(1, &VBO);
-    // glDeleteBuffers(1, &EBO);
-
     transform.position = glm::vec3(0.0f, 0.0f, 0.0f);
     transform.scale = glm::vec3(1.0f, 1.0f, 1.0f);
     transform.rotation = glm::vec3(0.0f, 0.0f, 0.0f);
 
     model = glm::mat4(1.0);
+    prevTransform = Transform();
 
     w = 0;
     h = 0;
@@ -86,18 +77,17 @@ void Image::blur(float sigma)
 {
     int nW = 720;
     int nH = 1280;
-    unsigned char* outputPixels = Blur::downsample_image(pixels, w, h, nW, nH);
+    unsigned char* outputPixels = new unsigned char[nW * nH * 3];
+    Blur::downsample_image(pixels, outputPixels, w, h, nW, nH);
     w = nW;
     h = nH;
 
     int rad = std::ceil(2 * sigma);
-    unsigned char* nPix = new unsigned char[(w - rad * 2) * (h - rad * 2) * 3];
-    Blur::applyGaussianFilter(outputPixels, nPix, w, h, chan, rad, sigma);
+    pixels = new unsigned char[(w - rad * 2) * (h - rad * 2) * 3];
+    Blur::applyGaussianFilter(outputPixels, pixels, w, h, chan, rad, sigma);
     w -= (rad * 2);
     h -= (rad * 2);
     Loader::freePixels(outputPixels);
-    Loader::freePixels(pixels);
-    pixels = nPix;
 }
 
 void Image::loadTexture(int textureSlot)
@@ -105,7 +95,6 @@ void Image::loadTexture(int textureSlot)
     if (imageLoaded) {
         return;
     }
-    // Seperate this into multiple functions
     Image::textureSlot = textureSlot;
 
     glGenTextures(1, &texID);
@@ -155,6 +144,12 @@ void Image::generateVertex()
 
 void Image::loadToGPU()
 {
+    if (VAO <= 0)
+        glDeleteVertexArrays(1, &VAO);
+    if (VBO <= 0)
+        glDeleteBuffers(1, &VBO);
+    if (EBO <= 0)
+        glDeleteBuffers(1, &EBO);
 
     glGenVertexArrays(1, &VAO);
     glGenBuffers(1, &VBO);

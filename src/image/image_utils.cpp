@@ -22,6 +22,7 @@ void freePixels(unsigned char* pixels)
     if (pixels != nullptr && pixels) {
         stbi_image_free(pixels);
     } else {
+        std::cerr << "No Data To Free" << std::endl;
     }
 }
 
@@ -46,25 +47,21 @@ std::vector<float> genGaussianKernal1D(int radius, float sigma)
     return kernel;
 }
 
-unsigned char* downsample_image(unsigned char* image, int width, int height, int newWidth, int newHeight)
+void downsample_image(unsigned char* image, unsigned char* output, int width, int height, int newWidth, int newHeight)
 {
     int new_width = newWidth;
     int new_height = newHeight;
-
-    unsigned char* new_image = new unsigned char[new_width * new_height * 3];
 
     for (int y = 0; y < new_height; y++) {
         for (int x = 0; x < new_width; x++) {
             int original_x = (x * width) / new_width;
             int original_y = (y * height) / new_height;
 
-            new_image[(y * new_width + x) * 3] = image[(original_y * width + original_x) * 3];
-            new_image[(y * new_width + x) * 3 + 1] = image[(original_y * width + original_x) * 3 + 1];
-            new_image[(y * new_width + x) * 3 + 2] = image[(original_y * width + original_x) * 3 + 2];
+            output[(y * new_width + x) * 3] = image[(original_y * width + original_x) * 3];
+            output[(y * new_width + x) * 3 + 1] = image[(original_y * width + original_x) * 3 + 1];
+            output[(y * new_width + x) * 3 + 2] = image[(original_y * width + original_x) * 3 + 2];
         }
     }
-
-    return new_image;
 }
 
 void applyGaussianFilter(const unsigned char* inputPixels, unsigned char* outputPixels,
