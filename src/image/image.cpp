@@ -77,17 +77,22 @@ void Image::blur(float sigma)
 {
     int nW = 720;
     int nH = 1280;
-    unsigned char* outputPixels = new unsigned char[nW * nH * 3];
-    Blur::downsample_image(pixels, outputPixels, w, h, nW, nH);
-    w = nW;
-    h = nH;
+    unsigned char* outputPixels = new unsigned char[nW * nH * chan];
+    Blur::downsample_image(pixels, outputPixels, &w, &h, nW, nH, chan);
 
-    int rad = std::ceil(2 * sigma);
-    pixels = new unsigned char[(w - rad * 2) * (h - rad * 2) * 3];
+    int rad = std::min((int)std::ceil(2 * sigma), std::min(w / 2, h / 2));
+    std::cout << "Rad: " << rad << std::endl;
+
+    Loader::freePixels(pixels);
+
+    pixels = new unsigned char[(w - (rad * 2)) * (h - (rad * 2)) * chan];
+
     Blur::applyGaussianFilter(outputPixels, pixels, w, h, chan, rad, sigma);
+
+    // Loader::freePixels(outputPixels);
+
     w -= (rad * 2);
     h -= (rad * 2);
-    Loader::freePixels(outputPixels);
 }
 
 void Image::loadTexture(int textureSlot)
