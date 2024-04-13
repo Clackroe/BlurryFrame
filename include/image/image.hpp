@@ -40,7 +40,7 @@ public:
     void generateVertex();
     void loadToGPU();
 
-    void blur(float sigma);
+    void blur(float blurScale);
 
     unsigned int VBO, VAO, EBO;
 

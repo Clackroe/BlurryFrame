@@ -58,10 +58,10 @@ int main()
     float t = 0;
     // Image image("content/3.png");
     Image imageBlur("content/3.png");
-    imageBlur.blur(5);
+    imageBlur.blur(2);
     // Image image2("content/40.jpg");
-    Image image2Blur("content/40.jpg");
-    image2Blur.blur(5);
+    Image image2Blur("content/30.png");
+    image2Blur.blur(2);
 
     imageBlur.generateVertex();
     image2Blur.generateVertex();
@@ -128,7 +128,7 @@ int main()
             scale_factor = std::min(static_cast<float>(glWindow.getWidth()) / blurImage->w, static_cast<float>(glWindow.getHeight()) / blurImage->h);
         }
 
-        blurImage->transform.scale = glm::vec3(scale_factor);
+        blurImage->transform.scale = glm::vec3(blur_scale);
         rend->renderImage(*blurImage);
         // if (sMananger->imageToRender != nullptr) {
         //     float blur_scale = 1.0f;

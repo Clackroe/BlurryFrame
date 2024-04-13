@@ -18,10 +18,14 @@ void freePixels(unsigned char* pixels);
 
 namespace Blur {
 
+enum Padding {
+    CLIP,
+    MIRROR,
+};
 std::vector<float> genGaussianKernal1D(int radius, float sigma);
 void downsample_image(unsigned char* image, unsigned char* output, int* width, int* height, int newWidth, int newHeight, int channels);
 void applyGaussianFilter(const unsigned char* inputPixels, unsigned char* outputPixels,
-    int width, int height, int channels, int radius, float sigma);
+    int& width, int& height, int channels, int radius, float sigma, Padding padding);
 }
 
 #endif

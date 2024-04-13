@@ -73,26 +73,30 @@ void Image::deconstruct()
     imageLoaded = false;
 }
 
-void Image::blur(float sigma)
+void Image::blur(float blurScale)
 {
-    int nW = 720;
-    int nH = 1280;
+    blurScale *= 0.1f;
+
+    float aspectRatio = (float)w / (float)h;
+
+    int nW = aspectRatio > 1 ? 1280 : 720;
+    int nH = std::ceil(nW / aspectRatio);
+
     unsigned char* outputPixels = new unsigned char[nW * nH * chan];
     Blur::downsample_image(pixels, outputPixels, &w, &h, nW, nH, chan);
 
-    int rad = std::min((int)std::ceil(2 * sigma), std::min(w / 2, h / 2));
-    std::cout << "Rad: " << rad << std::endl;
+    float sigma = blurScale * (glm::min(nW, nH) / 6.0f);
+
+    int rad = std::ceil(2 * sigma);
+
+    std::cout << "Sigma: " << sigma << std::endl;
+    std::cout << "Radius: " << rad << std::endl;
 
     Loader::freePixels(pixels);
 
-    pixels = new unsigned char[(w - (rad * 2)) * (h - (rad * 2)) * chan];
-
-    Blur::applyGaussianFilter(outputPixels, pixels, w, h, chan, rad, sigma);
-
-    // Loader::freePixels(outputPixels);
-
-    w -= (rad * 2);
-    h -= (rad * 2);
+    pixels = new unsigned char[(w) * (h)*chan];
+    Blur::applyGaussianFilter(outputPixels, pixels, w, h, chan, rad, sigma, Blur::MIRROR);
+    Loader::freePixels(outputPixels);
 }
 
 void Image::loadTexture(int textureSlot)

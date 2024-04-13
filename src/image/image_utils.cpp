@@ -32,6 +32,13 @@ void freePixels(unsigned char* pixels)
 
 namespace Blur {
 
+void downsample_image(unsigned char* image, unsigned char* output, int* width, int* height, int newWidth, int newHeight, int channels)
+{
+    stbir_resize_uint8_linear(image, *width, *height, 0, output, newWidth, newHeight, 0, (stbir_pixel_layout)channels);
+    *width = newWidth;
+    *height = newHeight;
+}
+
 // 1D Gaussian to take advantage of seperable filters.
 std::vector<float> genGaussianKernal1D(int radius, float sigma)
 {
@@ -49,155 +56,112 @@ std::vector<float> genGaussianKernal1D(int radius, float sigma)
     return kernel;
 }
 
-void downsample_image(unsigned char* image, unsigned char* output, int* width, int* height, int newWidth, int newHeight, int channels)
-{
-    stbir_resize_uint8_linear(image, *width, *height, 0, output, newWidth, newHeight, 0, (stbir_pixel_layout)channels);
-    *width = newWidth;
-    *height = newHeight;
-}
-
-// void applyGaussianFilter(const unsigned char* inputPixels, unsigned char* outputPixels,
-//     int width, int height, int channels, int radius, float sigma)
-// {
-//
-//     std::vector<float> kernel = genGaussianKernal1D(radius, sigma);
-//
-//     // Apply in the horizontal axis
-//     for (int y = radius; y < height - radius; y += 1) {
-//         for (int x = radius; x < width - radius; x += 1) {
-//             int pixelIndex = (y * width * channels) + x * channels;
-//             float sumR = 0.0f;
-//             float sumG = 0.0f;
-//             float sumB = 0.0f;
-//
-//             float sumWeights = 0.0f;
-//
-//             int kIndex = 0;
-//             for (int kx = -radius; kx <= radius; kx++) {
-//                 int kPIndex = (y * width * channels) + (x + kx) * channels;
-//                 sumR += inputPixels[kPIndex + 0] * kernel[kIndex];
-//                 sumG += inputPixels[kPIndex + 1] * kernel[kIndex];
-//                 sumB += inputPixels[kPIndex + 2] * kernel[kIndex];
-//                 sumWeights += kernel[kIndex];
-//                 kIndex++;
-//             }
-//
-//             pixelIndex = ((y - radius) * (width - radius * 2) * channels) + (x - radius) * channels;
-//             outputPixels[pixelIndex + 0] = glm::clamp((sumR / sumWeights), 0.0f, 255.0f);
-//             outputPixels[pixelIndex + 1] = glm::clamp((sumG / sumWeights), 0.0f, 255.0f);
-//             outputPixels[pixelIndex + 2] = glm::clamp((sumB / sumWeights), 0.0f, 255.0f);
-//         }
-//     }
-//
-//     // Apply kernel in the vertical.
-//     for (int y = radius; y < height - radius; y += 1) {
-//         for (int x = radius; x < width - radius; x += 1) {
-//             int pixelIndex = (y * width * channels) + x * channels;
-//             float sumR = 0.0f;
-//             float sumG = 0.0f;
-//             float sumB = 0.0f;
-//
-//             float sumWeights = 0.0f;
-//
-//             int kIndex = 0;
-//             for (int ky = -radius; ky <= radius; ky++) {
-//                 int kPIndex = ((y + ky) * width * channels) + x * channels;
-//                 sumR += outputPixels[kPIndex + 0] * kernel[kIndex];
-//                 sumG += outputPixels[kPIndex + 1] * kernel[kIndex];
-//                 sumB += outputPixels[kPIndex + 2] * kernel[kIndex];
-//                 sumWeights += kernel[kIndex];
-//                 kIndex++;
-//             }
-//
-//             pixelIndex = ((y - radius) * (width - (radius * 2)) * channels) + (x - radius) * channels;
-//             outputPixels[pixelIndex + 0] = glm::clamp((sumR / sumWeights), 0.0f, 255.0f);
-//             outputPixels[pixelIndex + 1] = glm::clamp((sumG / sumWeights), 0.0f, 255.0f);
-//             outputPixels[pixelIndex + 2] = glm::clamp((sumB / sumWeights), 0.0f, 255.0f);
-//         }
-//     }
-// }
-//
-
 void applyGaussianFilter(const unsigned char* inputPixels, unsigned char* outputPixels,
-    int width, int height, int channels, int radius, float sigma)
+    int& width, int& height, int channels, int radius, float sigma, Padding padding)
 {
+
+    // Add 0 padding
+    int extendedWidth = width + (2 * radius);
+    int extendedHeight = height + (2 * radius);
+    unsigned char* extendedInputPixels = new unsigned char[extendedWidth * extendedHeight * channels];
+    for (int y = 0; y < height; y++) {
+        for (int x = 0; x < width; x++) {
+            int srcIndex = ((y * width) + x) * channels;
+            int destIndex = (((y + radius) * extendedWidth) + (x + radius)) * channels;
+            for (int c = 0; c < channels; c++) {
+                extendedInputPixels[destIndex + c] = inputPixels[srcIndex + c];
+            }
+        }
+    }
+
+    if (padding != Padding::CLIP) {
+
+        // Mirror padding for top and bottom rows
+        for (int y = 0; y < radius; y++) {
+            for (int x = 0; x < width; x++) {
+                int srcTopIndex = (((radius - y) * width) + x) * channels;
+                int srcBottomIndex = (((height - 1 - y) * width) + x) * channels;
+                int destTopIndex = ((y * extendedWidth) + (x + radius)) * channels;
+                int destBottomIndex = (((extendedHeight - 1 - y) * extendedWidth) + (x + radius)) * channels;
+                for (int c = 0; c < channels; c++) {
+                    extendedInputPixels[destTopIndex + c] = inputPixels[srcTopIndex + c];
+                    extendedInputPixels[destBottomIndex + c] = inputPixels[srcBottomIndex + c];
+                }
+            }
+        }
+        // Mirror padding for left and right columns
+        for (int y = radius; y < extendedHeight - radius; y++) {
+            for (int x = 0; x < radius; x++) {
+                int srcLeftIndex = (((y - radius) * width) + (radius + x)) * channels;
+                int srcRightIndex = (((y - radius) * width) + (width - 1 - x)) * channels;
+                int destLeftIndex = ((y * extendedWidth) + x) * channels;
+                int destRightIndex = ((y * extendedWidth) + (extendedWidth - 1 - x)) * channels;
+                for (int c = 0; c < channels; c++) {
+                    extendedInputPixels[destLeftIndex + c] = inputPixels[srcLeftIndex + c];
+                    extendedInputPixels[destRightIndex + c] = inputPixels[srcRightIndex + c];
+                }
+            }
+        }
+    }
+
     std::vector<float> kernel = genGaussianKernal1D(radius, sigma);
 
-    // Extend image boundaries
-    int extendedWidth = width + 2 * radius;
-    int extendedHeight = height + 2 * radius;
+    // Vertical
+    for (int x = radius; x < extendedWidth - radius; x++) {
+        for (int y = radius; y < extendedHeight - radius; y++) {
 
-    unsigned char* extendedInputPixels = new unsigned char[extendedWidth * extendedHeight * channels];
+            int pixelIndex = ((y * extendedWidth) + x) * channels;
+            std::vector<float> channelSums(channels, 0.0f);
+            float sumOfWeights = 0.0f;
+
+            int kernelIndex = 0;
+            for (int ky = -radius; ky <= radius; ky++) {
+                int kernelPixelindex = (((y + ky) * extendedWidth) + x) * channels;
+                for (int c = 0; c < channelSums.size(); c++) {
+                    channelSums[c] += extendedInputPixels[kernelPixelindex + c] * kernel[kernelIndex];
+                }
+                sumOfWeights += kernel[kernelIndex];
+                kernelIndex++;
+            }
+
+            for (int c = 0; c < channelSums.size(); c++) {
+                extendedInputPixels[pixelIndex + c] = (int)glm::clamp((channelSums[c] / sumOfWeights), 0.0f, 255.0f);
+            }
+        }
+    }
+
+    // Horizontal
+    for (int x = radius; x < extendedWidth - radius; x++) {
+        for (int y = radius; y < extendedHeight - radius; y++) {
+
+            int pixelIndex = ((y * extendedWidth) + x) * channels;
+            std::vector<float> channelSums(channels, 0.0f);
+            float sumOfWeights = 0.0f;
+
+            int kernelIndex = 0;
+            for (int kx = -radius; kx <= radius; kx++) {
+                int kernelPixelindex = ((y * extendedWidth) + (x + kx)) * channels;
+                for (int c = 0; c < channelSums.size(); c++) {
+                    channelSums[c] += extendedInputPixels[kernelPixelindex + c] * kernel[kernelIndex];
+                }
+                sumOfWeights += kernel[kernelIndex];
+                kernelIndex++;
+            }
+            for (int c = 0; c < channelSums.size(); c++) {
+                extendedInputPixels[pixelIndex + c] = (int)glm::clamp((channelSums[c] / sumOfWeights), 0.0f, 255.0f);
+            }
+        }
+    }
 
     for (int y = 0; y < height; y++) {
         for (int x = 0; x < width; x++) {
-            int srcIndex = (y * width) + x * channels;
-            int destIndex = ((y + radius) * extendedWidth + (x + radius)) * channels;
-            // int destIndex = ((y + radius) * (extendedWidth - radius) + (x - radius)) * channels;
-            memcpy(&extendedInputPixels[destIndex], &inputPixels[srcIndex], channels);
-        }
-    }
-
-    // Apply in the horizontal axis
-    for (int y = radius; y < extendedHeight - radius; y++) {
-        for (int x = radius; x < extendedWidth - radius; x++) {
-            int pixelIndex = (y * extendedWidth * channels) + x * channels;
-            float sumR = 0.0f;
-            float sumG = 0.0f;
-            float sumB = 0.0f;
-            float sumWeights = 0.0f;
-
-            int kIndex = 0;
-            for (int kx = -radius; kx <= radius; kx++) {
-                int kPIndex = (y * extendedWidth * channels) + (x + kx) * channels;
-                if (kPIndex >= 0 && kPIndex < extendedWidth * extendedHeight * channels) {
-                    sumR += extendedInputPixels[kPIndex + 0] * kernel[kIndex];
-                    sumG += extendedInputPixels[kPIndex + 1] * kernel[kIndex];
-                    sumB += extendedInputPixels[kPIndex + 2] * kernel[kIndex];
-                    sumWeights += kernel[kIndex];
-                }
-                kIndex++;
-            }
-
-            pixelIndex = ((y - radius) * (extendedWidth - radius * 2) * channels) + (x - radius) * channels;
-            if (pixelIndex >= 0 && pixelIndex + channels * 2 <= extendedWidth * extendedHeight * channels) {
-                outputPixels[pixelIndex + 0] = glm::clamp((sumR / sumWeights), 0.0f, 255.0f);
-                outputPixels[pixelIndex + 1] = glm::clamp((sumG / sumWeights), 0.0f, 255.0f);
-                outputPixels[pixelIndex + 2] = glm::clamp((sumB / sumWeights), 0.0f, 255.0f);
+            int srcIndex = (((y + radius) * extendedWidth) + (x + radius)) * channels;
+            int destIndex = ((y * width) + x) * channels;
+            for (int c = 0; c < channels; c++) {
+                outputPixels[destIndex + c] = extendedInputPixels[srcIndex + c];
             }
         }
     }
-
-    // Apply kernel in the vertical.
-    for (int y = radius; y < extendedHeight - radius; y++) {
-        for (int x = radius; x < extendedWidth - radius; x++) {
-            int pixelIndex = (y * extendedWidth * channels) + x * channels;
-            float sumR = 0.0f;
-            float sumG = 0.0f;
-            float sumB = 0.0f;
-            float sumWeights = 0.0f;
-
-            int kIndex = 0;
-            for (int ky = -radius; ky <= radius; ky++) {
-                int kPIndex = ((y + ky) * extendedWidth * channels) + x * channels;
-                if (kPIndex >= 0 && kPIndex < extendedWidth * extendedHeight * channels) {
-                    sumR += outputPixels[kPIndex + 0] * kernel[kIndex];
-                    sumG += outputPixels[kPIndex + 1] * kernel[kIndex];
-                    sumB += outputPixels[kPIndex + 2] * kernel[kIndex];
-                    sumWeights += kernel[kIndex];
-                }
-                kIndex++;
-            }
-
-            pixelIndex = ((y - radius) * (extendedWidth - (radius * 2)) * channels) + (x - radius) * channels;
-            if (pixelIndex >= 0 && pixelIndex + channels * 2 <= extendedWidth * extendedHeight * channels) {
-                outputPixels[pixelIndex + 0] = glm::clamp((sumR / sumWeights), 0.0f, 255.0f);
-                outputPixels[pixelIndex + 1] = glm::clamp((sumG / sumWeights), 0.0f, 255.0f);
-                outputPixels[pixelIndex + 2] = glm::clamp((sumB / sumWeights), 0.0f, 255.0f);
-            }
-        }
-    }
-
-    // Loader::freePixels(extendedInputPixels);
+    delete[] extendedInputPixels;
 }
 }
